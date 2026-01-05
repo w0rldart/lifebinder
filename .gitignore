@@ -1,0 +1,86 @@
+# ----------------------------
+# React / Node
+# ----------------------------
+node_modules/
+.react-router/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+build/
+dist/
+out/
+.next/
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# Env files (keep .env.example tracked)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Local dev databases / data (if any)
+*.sqlite
+*.sqlite3
+
+# ----------------------------
+# Docker / Compose
+# ----------------------------
+# Environment overrides often used with compose
+docker-compose.override.yml
+
+# Local bind-mount data dirs (adjust to your project)
+docker-data/
+data/
+volumes/
+
+# Docker build artifacts
+*.tar
+*.tgz
+
+# Optional: ignore local Dockerfile variants
+Dockerfile.local
+Dockerfile.dev
+
+# ----------------------------
+# Logs
+# ----------------------------
+logs/
+*.log
+
+# ----------------------------
+# OS / Editor
+# ----------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# JetBrains
+.idea/
+
+# Vim / swap
+*.swp
+*.swo
+
+# ----------------------------
+# Misc
+# ----------------------------
+*.pem
+*.key

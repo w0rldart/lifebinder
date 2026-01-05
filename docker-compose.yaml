@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  lifebinder:
+    image: w0rldart/lifebinder:${BUILD_VERSION:-latest}
+    container_name: lifebinder
+    restart: unless-stopped
+
+    # nginx-unprivileged listens on 8080 in the container
+    ports:
+      - "${EXTERNAL_PORT:-3000}:8080"
+
+    # Optional but useful: shows as Healthy/Unhealthy in Synology UI
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+    # Hardening (works nicely with nginx-unprivileged which uses /tmp for pid/temp files)
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    # Keep logs from growing forever
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    labels:
+      - "com.lifebinder.description=Life Binder - End-of-life planning application"
+      - "com.lifebinder.version=${BUILD_VERSION:-latest}"

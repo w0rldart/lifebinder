@@ -6,8 +6,15 @@
 
 A local-first, encrypted end-of-life planning and information management application. Life Binder helps you organize critical information and create an actionable runbook for your loved ones.
 
-- _Ideal self-hosted tool for your NAS. Checkout [DEPLYOMENT.md](./DEPLOYMENT.md) for more info_
+- _Ideal self-hosted tool for your NAS._
+- _You can export vital information as a PDF for offline management and backup._
 - _Available as a ready to use Docker image at https://hub.docker.com/r/w0rldart/lifebinder_
+
+## Demo
+
+You can check out a demo at https://lifebinder.w0rldart.com
+
+Checkout [DEPLYOMENT.md](./DEPLOYMENT.md) for more info on how to run it yourself.
 
 ## What is Life Binder?
 

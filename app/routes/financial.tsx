@@ -827,8 +827,8 @@ export default function Financial() {
             title={bankForm.editingItem ? t('financial.modals.editBank') : t('financial.modals.addBank')}
             footer={
               <>
-                <Button variant="secondary" onClick={bankForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveBank} disabled={!bankForm.formData.institution?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={bankForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveBank} disabled={!bankForm.formData.institution?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -848,8 +848,8 @@ export default function Financial() {
             title={investmentForm.editingItem ? t('financial.modals.editInvestment') : t('financial.modals.addInvestment')}
             footer={
               <>
-                <Button variant="secondary" onClick={investmentForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveInvestment} disabled={!investmentForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={investmentForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveInvestment} disabled={!investmentForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -869,8 +869,8 @@ export default function Financial() {
             title={retirementForm.editingItem ? t('financial.modals.editRetirement') : t('financial.modals.addRetirement')}
             footer={
               <>
-                <Button variant="secondary" onClick={retirementForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveRetirement} disabled={!retirementForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={retirementForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveRetirement} disabled={!retirementForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -890,8 +890,8 @@ export default function Financial() {
             title={insuranceForm.editingItem ? t('financial.modals.editInsurance') : t('financial.modals.addInsurance')}
             footer={
               <>
-                <Button variant="secondary" onClick={insuranceForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveInsurance} disabled={!insuranceForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={insuranceForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveInsurance} disabled={!insuranceForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -911,8 +911,8 @@ export default function Financial() {
             title={debtForm.editingItem ? t('financial.modals.editDebt') : t('financial.modals.addDebt')}
             footer={
               <>
-                <Button variant="secondary" onClick={debtForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveDebt} disabled={!debtForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={debtForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveDebt} disabled={!debtForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -933,8 +933,8 @@ export default function Financial() {
             title={cardForm.editingItem ? t('financial.modals.editCard') : t('financial.modals.addCard')}
             footer={
               <>
-                <Button variant="secondary" onClick={cardForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveCard} disabled={!cardForm.formData.issuer?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={cardForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveCard} disabled={!cardForm.formData.issuer?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -953,8 +953,8 @@ export default function Financial() {
             title={safetyForm.editingItem ? t('financial.modals.editSafety') : t('financial.modals.addSafety')}
             footer={
               <>
-                <Button variant="secondary" onClick={safetyForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveSafety} disabled={!safetyForm.formData.bankLocation?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={safetyForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveSafety} disabled={!safetyForm.formData.bankLocation?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -973,8 +973,8 @@ export default function Financial() {
             title={advisorForm.editingItem ? t('financial.modals.editAdvisor') : t('financial.modals.addAdvisor')}
             footer={
               <>
-                <Button variant="secondary" onClick={advisorForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveAdvisor} disabled={!advisorForm.formData.name?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={advisorForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveAdvisor} disabled={!advisorForm.formData.name?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -994,8 +994,8 @@ export default function Financial() {
             title={taxForm.editingItem ? t('financial.modals.editTax') : t('financial.modals.addTax')}
             footer={
               <>
-                <Button variant="secondary" onClick={taxForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveTax} disabled={!taxForm.formData.year?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={taxForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveTax} disabled={!taxForm.formData.year?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -1014,8 +1014,8 @@ export default function Financial() {
             title={accountantForm.editingItem ? t('financial.modals.editAccountant') : t('financial.modals.addAccountant')}
             footer={
               <>
-                <Button variant="secondary" onClick={accountantForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveAccountant} disabled={!accountantForm.formData.name?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={accountantForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveAccountant} disabled={!accountantForm.formData.name?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -1026,9 +1026,9 @@ export default function Financial() {
               <Input label={t('financial.fields.email')} type="email" value={accountantForm.formData.email || ''} onChange={(e) => accountantForm.updateField('email', e.target.value)} />
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={accountantForm.formData.hasTaxHistoryAccess || false} onChange={(e) => accountantForm.updateField('hasTaxHistoryAccess', e.target.checked)} className="rounded border-gray-300" />
-                <span className="text-sm text-gray-700">Has access to tax history</span>
+                <span className="text-sm text-gray-700">{t('financial.accountantFields.hasTaxHistoryAccess')}</span>
               </label>
-              <Input label="Years Serviced" value={accountantForm.formData.yearsServiced || ''} onChange={(e) => accountantForm.updateField('yearsServiced', e.target.value)} placeholder="e.g., 2020-2024" />
+              <Input label={t('financial.accountantFields.yearsServiced')} value={accountantForm.formData.yearsServiced || ''} onChange={(e) => accountantForm.updateField('yearsServiced', e.target.value)} placeholder={t('financial.accountantFields.yearsServicedPlaceholder')} />
               <Input label={t('financial.fields.servicesProvided')} value={accountantForm.formData.servicesProvided || ''} onChange={(e) => accountantForm.updateField('servicesProvided', e.target.value)} placeholder={t('financial.fields.servicesProvidedPlaceholder')} />
               <TextArea label={t('financial.fields.notes')} value={accountantForm.formData.notes || ''} onChange={(e) => accountantForm.updateField('notes', e.target.value)} rows={3} />
             </div>
@@ -1040,8 +1040,8 @@ export default function Financial() {
             title={residualForm.editingItem ? t('financial.modals.editResidual') : t('financial.modals.addResidual')}
             footer={
               <>
-                <Button variant="secondary" onClick={residualForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveResidual} disabled={!residualForm.formData.sourceName?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={residualForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveResidual} disabled={!residualForm.formData.sourceName?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
@@ -1061,8 +1061,8 @@ export default function Financial() {
             title={cryptoForm.editingItem ? t('financial.modals.editCrypto') : t('financial.modals.addCrypto')}
             footer={
               <>
-                <Button variant="secondary" onClick={cryptoForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveCrypto} disabled={!cryptoForm.formData.currencyType?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={cryptoForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveCrypto} disabled={!cryptoForm.formData.currencyType?.trim()}>{t('common.save')}</Button>
               </>
             }
           >

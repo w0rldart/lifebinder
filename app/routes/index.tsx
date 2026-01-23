@@ -239,7 +239,7 @@ export default function Index() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loading}
+                disabled={loading || (!skipEncryption && !passphrase)}
               >
                 {loading ? t('welcome.creating') : t('welcome.createButton')}
               </Button>

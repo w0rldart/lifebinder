@@ -71,12 +71,12 @@ export default function Contacts() {
     const references: string[] = [];
 
     if (plan.willTestaments.estateContacts.some(ec => ec.existingContactId === contactId)) {
-      references.push('Estate Planning - Executors/Trustees');
+      references.push(t('contacts.estatePlanningExecutors'));
     }
 
     plan.willTestaments.assets.forEach(asset => {
       if (asset.beneficiaries.some(b => b.contactId === contactId)) {
-        references.push(`Estate Planning - Asset: "${asset.name}" (Beneficiary)`);
+        references.push(t('contacts.estatePlanningAsset', { assetName: asset.name }));
       }
     });
 
@@ -403,21 +403,21 @@ export default function Contacts() {
           <Modal
             isOpen={true}
             onClose={() => setDetailContact(null)}
-            title={`Contact Details: ${detailContact.name}`}
+            title={t('contacts.contactDetailsTitle', { name: detailContact.name })}
             footer={
               <Button variant="secondary" onClick={() => setDetailContact(null)}>
-                Close
+                {t('common.close')}
               </Button>
             }
           >
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Contact Information</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('contacts.contactInformation')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-start gap-2">
                     <User className="w-4 h-4 text-gray-400 mt-0.5" />
                     <div>
-                      <span className="text-gray-500">Name:</span>{' '}
+                      <span className="text-gray-500">{t('contacts.fieldLabels.name')}</span>{' '}
                       <span className="text-gray-900 font-medium">{detailContact.name}</span>
                     </div>
                   </div>
@@ -425,7 +425,7 @@ export default function Contacts() {
                     <div className="flex items-start gap-2">
                       <User className="w-4 h-4 text-gray-400 mt-0.5" />
                       <div>
-                        <span className="text-gray-500">Relationship:</span>{' '}
+                        <span className="text-gray-500">{t('contacts.fieldLabels.relationship')}</span>{' '}
                         <span className="text-gray-900">{detailContact.relationship}</span>
                       </div>
                     </div>
@@ -434,7 +434,7 @@ export default function Contacts() {
                     <div className="flex items-start gap-2">
                       <Phone className="w-4 h-4 text-gray-400 mt-0.5" />
                       <div>
-                        <span className="text-gray-500">Phone:</span>{' '}
+                        <span className="text-gray-500">{t('contacts.fieldLabels.phone')}</span>{' '}
                         <span className="text-gray-900">{detailContact.phone}</span>
                       </div>
                     </div>
@@ -443,7 +443,7 @@ export default function Contacts() {
                     <div className="flex items-start gap-2">
                       <Mail className="w-4 h-4 text-gray-400 mt-0.5" />
                       <div>
-                        <span className="text-gray-500">Email:</span>{' '}
+                        <span className="text-gray-500">{t('contacts.fieldLabels.email')}</span>{' '}
                         <span className="text-gray-900">{detailContact.email}</span>
                       </div>
                     </div>
@@ -451,12 +451,12 @@ export default function Contacts() {
                   {detailContact.notifyBeforeSocial && (
                     <div className="flex items-start gap-2">
                       <Star className="w-4 h-4 text-blue-600 fill-blue-600 mt-0.5" />
-                      <span className="text-blue-900 font-medium">Priority contact - notify before social media</span>
+                      <span className="text-blue-900 font-medium">{t('contacts.priorityContact')}</span>
                     </div>
                   )}
                   {detailContact.notes && (
                     <div className="mt-3 p-3 bg-gray-50 rounded text-gray-700">
-                      <span className="text-gray-500 font-medium">Notes:</span>
+                      <span className="text-gray-500 font-medium">{t('contacts.fieldLabels.notes')}</span>
                       <p className="mt-1">{detailContact.notes}</p>
                     </div>
                   )}
@@ -468,29 +468,29 @@ export default function Contacts() {
                 if (associations.totalCount === 0) {
                   return (
                     <div className="p-4 bg-gray-50 rounded-lg text-center">
-                      <p className="text-sm text-gray-600">This contact is not currently referenced in any estate planning documents.</p>
+                      <p className="text-sm text-gray-600">{t('contacts.notReferencedAnywhere')}</p>
                     </div>
                   );
                 }
 
                 return (
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Associated Resources</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('contacts.associatedResources')}</h3>
                     <div className="space-y-3">
                       {associations.executorRole && (
                         <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm font-medium text-green-900">Executor/Trustee Role</p>
-                          <p className="text-xs text-green-700 mt-1">Listed as an executor or trustee in Estate Planning</p>
+                          <p className="text-sm font-medium text-green-900">{t('contacts.executorRole')}</p>
+                          <p className="text-xs text-green-700 mt-1">{t('contacts.executorRoleDescription')}</p>
                         </div>
                       )}
                       {associations.assetBeneficiaries.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-sm font-medium text-gray-700">Asset Beneficiary ({associations.assetBeneficiaries.length})</p>
+                          <p className="text-sm font-medium text-gray-700">{t('contacts.assetBeneficiary')} ({t('contacts.beneficiaryCount', { count: associations.assetBeneficiaries.length })})</p>
                           {associations.assetBeneficiaries.map((asset, idx) => (
                             <div key={idx} className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                               <p className="text-sm font-medium text-blue-900">{asset.assetName}</p>
                               {asset.percentage && (
-                                <p className="text-xs text-blue-700 mt-1">Beneficiary share: {asset.percentage}%</p>
+                                <p className="text-xs text-blue-700 mt-1">{t('contacts.beneficiaryShare')}: {asset.percentage}%</p>
                               )}
                             </div>
                           ))}

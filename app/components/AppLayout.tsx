@@ -115,7 +115,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               <span className="text-lg sm:text-xl font-bold text-gray-900 truncate">Life Binder</span>
               {showWarning && (
                 <span className="hidden sm:inline text-sm text-yellow-600 font-medium whitespace-nowrap">
-                  Auto-lock in {minutesRemaining} min
+                  {t('navigation.autoLockWarning', { minutes: minutesRemaining })}
                 </span>
               )}
             </div>
@@ -190,7 +190,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           />
           <nav className="fixed top-0 left-0 bottom-0 w-64 bg-white shadow-xl z-40 lg:hidden overflow-y-auto">
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <span className="font-semibold text-gray-900">Menu</span>
+              <span className="font-semibold text-gray-900">{t('navigation.menu')}</span>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
@@ -372,13 +372,13 @@ export function AppLayout({ children }: AppLayoutProps) {
       <Modal
         isOpen={showResetModal}
         onClose={() => setShowResetModal(false)}
-        title="Reset Plan"
+        title={t('settings.resetPlanModalTitle')}
       >
         <div className="space-y-4">
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
-            <p className="font-medium mb-2">Warning: This cannot be undone</p>
+            <p className="font-medium mb-2">{t('settings.resetPlanWarning')}</p>
             <p>
-              This will permanently delete all your data and return you to the welcome screen. You will need to create a new plan or import an existing one.
+              {t('settings.resetPlanDescription')}
             </p>
           </div>
 
@@ -387,13 +387,13 @@ export function AppLayout({ children }: AppLayoutProps) {
               onClick={() => setShowResetModal(false)}
               className="bg-gray-200 text-gray-700 hover:bg-gray-300"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleResetPlan}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
-              Reset Plan
+              {t('settings.resetPlanButton')}
             </Button>
           </div>
         </div>

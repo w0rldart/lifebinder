@@ -34,7 +34,9 @@
     "settings": "Configuración",
     "export": "Exportar",
     "help": "Ayuda",
-    "lock": "Bloquear"
+    "lock": "Bloquear",
+    "menu": "Menú",
+    "autoLockWarning": "Bloqueo automático en {minutes} min"
   },
   "welcome": {
     "tagline": "Crea tu manual de vida seguro",
@@ -159,6 +161,7 @@
     "updateReferencesFirst": "Si eliminas este contacto, estas referencias quedarán inválidas. Considera actualizarlas primero.",
     "deleteAnyway": "Eliminar de Todos Modos",
     "contactDetails": "Detalles del Contacto",
+    "contactDetailsTitle": "Detalles del Contacto: {name}",
     "contactInformation": "Información del Contacto",
     "priorityContact": "Contacto prioritario - notificar antes de redes sociales",
     "notReferencedAnywhere": "Este contacto actualmente no está referenciado en ningún documento de planificación patrimonial.",
@@ -166,7 +169,17 @@
     "executorRole": "Rol de Albacea/Fideicomisario",
     "executorRoleDescription": "Listado como albacea o fideicomisario en Planificación Patrimonial",
     "assetBeneficiary": "Beneficiario de Activos",
-    "beneficiaryShare": "Participación del beneficiario"
+    "beneficiaryShare": "Participación del beneficiario",
+    "beneficiaryCount": "{count}",
+    "estatePlanningExecutors": "Planificación Patrimonial - Albaceas/Fideicomisarios",
+    "estatePlanningAsset": "Planificación Patrimonial - Activo: \"{assetName}\" (Beneficiario)",
+    "fieldLabels": {
+      "name": "Nombre:",
+      "relationship": "Relación:",
+      "phone": "Teléfono:",
+      "email": "Correo Electrónico:",
+      "notes": "Notas:"
+    }
   },
   "accounts": {
     "title": "Cuentas",
@@ -473,12 +486,16 @@
     "cardLabels": {
       "accountType": "Tipo de Cuenta:",
       "accountNumber": "Número de Cuenta:",
+      "account": "Cuenta:",
       "routing": "Ruta:",
+      "contact": "Contacto:",
       "type": "Tipo:",
       "estimatedValue": "Valor Estimado:",
+      "value": "Valor:",
       "beneficiaries": "Beneficiarios:",
       "provider": "Proveedor:",
       "policy": "Póliza #:",
+      "policy2": "Póliza:",
       "coverage": "Cobertura:",
       "lender": "Prestamista:",
       "balance": "Saldo:",
@@ -490,6 +507,7 @@
       "fee": "Cuota Anual:",
       "bank": "Banco:",
       "box": "Caja #:",
+      "box2": "Caja",
       "key": "Llave:",
       "contents": "Contenido:",
       "phone": "Teléfono:",
@@ -503,9 +521,15 @@
       "exchange": "Intercambio:",
       "trustedContact": "Contacto de Confianza:",
       "preparer": "Preparador:",
-      "contact": "Contacto:",
+      "contactLabel": "Contacto:",
       "year": "Año:",
+      "taxYear": "Año Fiscal",
       "documentType": "Tipo:"
+    },
+    "accountantFields": {
+      "hasTaxHistoryAccess": "Tiene acceso al historial fiscal",
+      "yearsServiced": "Años de Servicio",
+      "yearsServicedPlaceholder": "ej., 2020-2024"
     }
   },
   "documents": {
@@ -1074,7 +1098,11 @@
     },
     "deleteFinalWarning": "Esta acción no se puede deshacer. Asegúrate de haber exportado tus datos si necesitas conservarlos.",
     "language": "Idioma",
-    "languageDescription": "Elige tu idioma preferido"
+    "languageDescription": "Elige tu idioma preferido",
+    "resetPlanModalTitle": "Reiniciar Plan",
+    "resetPlanWarning": "Advertencia: Esto no se puede deshacer",
+    "resetPlanDescription": "Esto eliminará permanentemente todos tus datos y te devolverá a la pantalla de bienvenida. Necesitarás crear un nuevo plan o importar uno existente.",
+    "resetPlanButton": "Reiniciar Plan"
   },
   "export": {
     "title": "Exportar y Respaldar",

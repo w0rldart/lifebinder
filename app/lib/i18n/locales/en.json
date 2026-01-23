@@ -34,7 +34,9 @@
     "settings": "Settings",
     "export": "Export",
     "help": "Help",
-    "lock": "Lock"
+    "lock": "Lock",
+    "menu": "Menu",
+    "autoLockWarning": "Auto-lock in {minutes} min"
   },
   "welcome": {
     "tagline": "Create your secure life runbook",
@@ -159,6 +161,7 @@
     "updateReferencesFirst": "If you delete this contact, these references will become invalid. Consider updating them first.",
     "deleteAnyway": "Delete Anyway",
     "contactDetails": "Contact Details",
+    "contactDetailsTitle": "Contact Details: {name}",
     "contactInformation": "Contact Information",
     "priorityContact": "Priority contact - notify before social media",
     "notReferencedAnywhere": "This contact is not currently referenced in any estate planning documents.",
@@ -166,7 +169,17 @@
     "executorRole": "Executor/Trustee Role",
     "executorRoleDescription": "Listed as an executor or trustee in Estate Planning",
     "assetBeneficiary": "Asset Beneficiary",
-    "beneficiaryShare": "Beneficiary share"
+    "beneficiaryShare": "Beneficiary share",
+    "beneficiaryCount": "{count}",
+    "estatePlanningExecutors": "Estate Planning - Executors/Trustees",
+    "estatePlanningAsset": "Estate Planning - Asset: \"{assetName}\" (Beneficiary)",
+    "fieldLabels": {
+      "name": "Name:",
+      "relationship": "Relationship:",
+      "phone": "Phone:",
+      "email": "Email:",
+      "notes": "Notes:"
+    }
   },
   "accounts": {
     "title": "Accounts",
@@ -473,12 +486,16 @@
     "cardLabels": {
       "accountType": "Account Type:",
       "accountNumber": "Account #:",
+      "account": "Account:",
       "routing": "Routing:",
+      "contact": "Contact:",
       "type": "Type:",
       "estimatedValue": "Estimated Value:",
+      "value": "Value:",
       "beneficiaries": "Beneficiaries:",
       "provider": "Provider:",
       "policy": "Policy #:",
+      "policy2": "Policy:",
       "coverage": "Coverage:",
       "lender": "Lender:",
       "balance": "Balance:",
@@ -490,6 +507,7 @@
       "fee": "Annual Fee:",
       "bank": "Bank:",
       "box": "Box #:",
+      "box2": "Box",
       "key": "Key:",
       "contents": "Contents:",
       "phone": "Phone:",
@@ -503,9 +521,15 @@
       "exchange": "Exchange:",
       "trustedContact": "Trusted Contact:",
       "preparer": "Preparer:",
-      "contact": "Contact:",
+      "contactLabel": "Contact:",
       "year": "Year:",
+      "taxYear": "Tax Year",
       "documentType": "Type:"
+    },
+    "accountantFields": {
+      "hasTaxHistoryAccess": "Has access to tax history",
+      "yearsServiced": "Years Serviced",
+      "yearsServicedPlaceholder": "e.g., 2020-2024"
     }
   },
   "documents": {
@@ -1074,7 +1098,11 @@
     },
     "deleteFinalWarning": "This action cannot be undone. Make sure you have exported your data if you need to keep it.",
     "language": "Language",
-    "languageDescription": "Choose your preferred language"
+    "languageDescription": "Choose your preferred language",
+    "resetPlanModalTitle": "Reset Plan",
+    "resetPlanWarning": "Warning: This cannot be undone",
+    "resetPlanDescription": "This will permanently delete all your data and return you to the welcome screen. You will need to create a new plan or import an existing one.",
+    "resetPlanButton": "Reset Plan"
   },
   "export": {
     "title": "Export & Backup",

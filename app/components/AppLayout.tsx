@@ -5,6 +5,7 @@ import { Modal } from './Modal';
 import { Button } from './Button';
 import { Input } from './Input';
 import { calculatePassphraseStrength } from '~/lib/crypto';
+import { useLanguage } from '~/lib/language-context';
 import { Lock, AlertTriangle, Info, LayoutDashboard, Users, Key, CreditCard, FileText, Shield, KeyRound, Scale, DollarSign, AlertCircle, StickyNote, Package, BookOpen, Settings, Menu, X } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -15,6 +16,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { isLocked, lock, timeUntilAutoLock, plan, isEncrypted, addEncryption, resetPlan } = useSession();
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showEncryptionModal, setShowEncryptionModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
@@ -35,20 +37,20 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/contacts', label: 'Contacts', icon: Users },
-    { path: '/access', label: 'Access', icon: Key },
-    { path: '/accounts', label: 'Accounts', icon: CreditCard },
-    { path: '/documents', label: 'Documents', icon: FileText },
-    { path: '/physical-security', label: 'Physical Security', icon: Shield },
-    { path: '/security-recovery', label: 'Security Recovery', icon: KeyRound },
-    { path: '/will-testaments', label: 'Will & Testaments', icon: Scale },
-    { path: '/financial', label: 'Financial', icon: DollarSign },
-    { path: '/emergency', label: 'Emergency', icon: AlertCircle },
-    { path: '/notes', label: 'Notes', icon: StickyNote },
-    { path: '/export', label: 'Export', icon: Package },
-    { path: '/help', label: 'Help & Guide', icon: BookOpen },
-    { path: '/settings', label: 'Settings', icon: Settings },
+    { path: '/dashboard', label: t('navigation.dashboard'), icon: LayoutDashboard },
+    { path: '/contacts', label: t('navigation.contacts'), icon: Users },
+    { path: '/access', label: t('navigation.access'), icon: Key },
+    { path: '/accounts', label: t('navigation.accounts'), icon: CreditCard },
+    { path: '/documents', label: t('navigation.documents'), icon: FileText },
+    { path: '/physical-security', label: t('navigation.physicalSecurity'), icon: Shield },
+    { path: '/security-recovery', label: t('navigation.securityRecovery'), icon: KeyRound },
+    { path: '/will-testaments', label: t('navigation.willTestaments'), icon: Scale },
+    { path: '/financial', label: t('navigation.financial'), icon: DollarSign },
+    { path: '/emergency', label: t('navigation.emergency'), icon: AlertCircle },
+    { path: '/notes', label: t('navigation.notes'), icon: StickyNote },
+    { path: '/export', label: t('navigation.export'), icon: Package },
+    { path: '/help', label: t('navigation.help'), icon: BookOpen },
+    { path: '/settings', label: t('navigation.settings'), icon: Settings },
   ];
 
   const minutesRemaining = Math.ceil(timeUntilAutoLock / 1000 / 60);
@@ -122,7 +124,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="px-3 py-2 sm:px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2 flex-shrink-0"
             >
               <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Lock</span>
+              <span className="hidden sm:inline">{t('navigation.lock')}</span>
             </button>
           </div>
         </div>
@@ -136,10 +138,10 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-yellow-800">
-                    Your data is not encrypted
+                    {t('settings.encryptionDisabled')}
                   </p>
                   <p className="text-xs text-yellow-700 mt-1 hidden sm:block">
-                    Anyone with access to your browser storage can read your data. Go to Settings to enable encryption.
+                    {t('settings.encryptionWarningBanner')}
                   </p>
                 </div>
               </div>
@@ -147,7 +149,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 to="/settings"
                 className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-center sm:text-left"
               >
-                Settings
+                {t('settings.title')}
               </Link>
             </div>
           </div>
@@ -162,10 +164,10 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <Info className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-blue-800">
-                    You are viewing demo data
+                    {t('demo.viewingDemoData')}
                   </p>
                   <p className="text-xs text-blue-700 mt-1 hidden sm:block">
-                    This is sample data for testing purposes. Replace it with your real information.
+                    {t('demo.sampleDataNotice')}
                   </p>
                 </div>
               </div>
@@ -173,7 +175,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 onClick={() => setShowResetModal(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 whitespace-nowrap"
               >
-                Reset Plan
+                {t('demo.resetPlan')}
               </Button>
             </div>
           </div>
@@ -279,26 +281,26 @@ export function AppLayout({ children }: AppLayoutProps) {
           setConfirmPassphrase('');
           setError('');
         }}
-        title="Add Encryption"
+        title={t('settings.addEncryptionModalTitle')}
       >
         <div className="space-y-4">
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-            <p className="font-medium mb-2">Protect Your Data</p>
+            <p className="font-medium mb-2">{t('common.protectYourData')}</p>
             <p>
-              Adding encryption will secure your data with a passphrase. Once encrypted, you'll need to enter your passphrase each time you unlock the binder.
+              {t('settings.addEncryptionModalDesc')}
             </p>
             <p className="mt-2 font-medium">
-              Important: Your passphrase cannot be recovered if lost. Store it securely.
+              {t('settings.passphraseWarning')}
             </p>
           </div>
 
           <div>
             <Input
-              label="New Passphrase"
+              label={t('settings.enterPassphrase')}
               type="password"
               value={passphrase}
               onChange={(e) => setPassphrase(e.target.value)}
-              placeholder="Enter a strong passphrase"
+              placeholder={t('settings.passphraseHint')}
             />
             {strength && (
               <div className="mt-2">
@@ -331,11 +333,11 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
 
           <Input
-            label="Confirm Passphrase"
+            label={t('settings.confirmPassphrase')}
             type="password"
             value={confirmPassphrase}
             onChange={(e) => setConfirmPassphrase(e.target.value)}
-            placeholder="Re-enter your passphrase"
+            placeholder={t('settings.passphraseHint')}
           />
 
           {error && (
@@ -355,13 +357,13 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="bg-gray-200 text-gray-700 hover:bg-gray-300"
               disabled={loading}
             >
-              Cancel
+              {t('settings.cancel')}
             </Button>
             <Button
               onClick={handleAddEncryption}
               disabled={loading || !passphrase || !confirmPassphrase}
             >
-              {loading ? 'Adding Encryption...' : 'Add Encryption'}
+              {loading ? t('settings.addingEncryption') : t('settings.addEncryptionButton')}
             </Button>
           </div>
         </div>

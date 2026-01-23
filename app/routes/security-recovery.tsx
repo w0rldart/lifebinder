@@ -8,12 +8,14 @@ import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
+import { useLanguage } from '~/lib/language-context';
 import type { SecurityQuestion } from '~/types';
 import { Edit2, Trash2 } from 'lucide-react';
 
 export default function SecurityRecovery() {
   const { plan } = useSession();
   const { updatePlan } = usePlanUpdater();
+  const { t } = useLanguage();
 
   const questionForm = useModalForm<Partial<SecurityQuestion>>({ question: '', answer: '', notes: '' });
 
@@ -22,14 +24,14 @@ export default function SecurityRecovery() {
     const updated = questionForm.editingItem
       ? plan.securityRecovery.securityQuestions.map(q => q.id === questionForm.editingItem!.id ? { ...questionForm.formData, id: q.id } as SecurityQuestion : q)
       : [...plan.securityRecovery.securityQuestions, { ...questionForm.formData, id: crypto.randomUUID() } as SecurityQuestion];
-    await updatePlan({ ...plan, securityRecovery: { ...plan.securityRecovery, securityQuestions: updated } }, 'Security question saved');
+    await updatePlan({ ...plan, securityRecovery: { ...plan.securityRecovery, securityQuestions: updated } }, t('securityRecovery.questionSaved'));
     questionForm.closeModal();
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    if (!plan || !confirm('Delete this security question?')) return;
+    if (!plan || !confirm(t('securityRecovery.deleteConfirm'))) return;
     const updated = plan.securityRecovery.securityQuestions.filter(q => q.id !== id);
-    await updatePlan({ ...plan, securityRecovery: { ...plan.securityRecovery, securityQuestions: updated } }, 'Security question deleted');
+    await updatePlan({ ...plan, securityRecovery: { ...plan.securityRecovery, securityQuestions: updated } }, t('securityRecovery.questionDeleted'));
   };
 
   return (
@@ -37,29 +39,29 @@ export default function SecurityRecovery() {
       {plan && (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Security Recovery</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('securityRecovery.title')}</h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Account recovery security questions and answers
+            {t('securityRecovery.description')}
           </p>
         </div>
 
         <WarningBanner type="warning">
-          <strong>High Sensitivity:</strong> This information can be used to access your accounts. Store this section securely and consider excluding it from exports shared with others.
+          <strong>{t('securityRecovery.highSensitivity')}</strong> {t('securityRecovery.highSensitivityText')}
         </WarningBanner>
 
-        <Card title="Security Questions" action={<Button onClick={() => questionForm.openModal()}>Add Question</Button>}>
+        <Card title={t('securityRecovery.securityQuestions')} action={<Button onClick={() => questionForm.openModal()}>{t('securityRecovery.addQuestion')}</Button>}>
           <p className="text-sm text-gray-600 mb-4">
-            Document security questions and answers used for account recovery
+            {t('securityRecovery.securityQuestionsDescription')}
           </p>
           <div className="space-y-3">
             {plan.securityRecovery.securityQuestions.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No security questions added yet</p>
+              <p className="text-gray-500 text-sm italic">{t('securityRecovery.noQuestionsYet')}</p>
             ) : (
               plan.securityRecovery.securityQuestions.map(question => (
                 <div key={question.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{question.question}</div>
-                    <div className="text-sm text-gray-600 mt-1">Answer: {question.answer}</div>
+                    <div className="text-sm text-gray-600 mt-1">{t('securityRecovery.answerLabel')} {question.answer}</div>
                     {question.notes && <div className="text-sm text-gray-500 mt-1">{question.notes}</div>}
                   </div>
                   <div className="flex gap-2">
@@ -76,11 +78,38 @@ export default function SecurityRecovery() {
           </div>
         </Card>
 
-        <Modal isOpen={questionForm.isModalOpen} onClose={questionForm.closeModal} title={questionForm.editingItem ? 'Edit Security Question' : 'Add Security Question'} footer={<><Button variant="secondary" onClick={questionForm.closeModal}>Cancel</Button><Button onClick={handleSaveQuestion} disabled={!questionForm.formData.question?.trim()}>Save</Button></>}>
+        <Modal
+          isOpen={questionForm.isModalOpen}
+          onClose={questionForm.closeModal}
+          title={questionForm.editingItem ? t('securityRecovery.editQuestion') : t('securityRecovery.addQuestion')}
+          footer={
+            <>
+              <Button variant="secondary" onClick={questionForm.closeModal}>{t('common.cancel')}</Button>
+              <Button onClick={handleSaveQuestion} disabled={!questionForm.formData.question?.trim()}>{t('common.save')}</Button>
+            </>
+          }
+        >
           <div className="space-y-4">
-            <Input label="Security Question" value={questionForm.formData.question || ''} onChange={(e) => questionForm.updateField('question', e.target.value)} placeholder="e.g., What is your mother's maiden name?" required />
-            <Input label="Answer" value={questionForm.formData.answer || ''} onChange={(e) => questionForm.updateField('answer', e.target.value)} placeholder="Your answer" />
-            <TextArea label="Notes" value={questionForm.formData.notes || ''} onChange={(e) => questionForm.updateField('notes', e.target.value)} placeholder="Which accounts use this question" rows={2} />
+            <Input
+              label={t('securityRecovery.fields.securityQuestion')}
+              value={questionForm.formData.question || ''}
+              onChange={(e) => questionForm.updateField('question', e.target.value)}
+              placeholder={t('securityRecovery.fields.questionPlaceholder')}
+              required
+            />
+            <Input
+              label={t('securityRecovery.fields.answer')}
+              value={questionForm.formData.answer || ''}
+              onChange={(e) => questionForm.updateField('answer', e.target.value)}
+              placeholder={t('securityRecovery.fields.answerPlaceholder')}
+            />
+            <TextArea
+              label={t('contacts.notes')}
+              value={questionForm.formData.notes || ''}
+              onChange={(e) => questionForm.updateField('notes', e.target.value)}
+              placeholder={t('securityRecovery.fields.notesPlaceholder')}
+              rows={2}
+            />
           </div>
         </Modal>
       </div>

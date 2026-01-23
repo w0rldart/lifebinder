@@ -8,6 +8,7 @@ import { TextArea } from '~/components/TextArea';
 import { EmptyState } from '~/components/EmptyState';
 import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
 import type { Contact } from '~/types';
@@ -21,6 +22,7 @@ interface ContactAssociations {
 
 export default function Contacts() {
   const { plan } = useSession();
+  const { t } = useLanguage();
   const { updatePlan } = usePlanUpdater();
   const [deleteWarning, setDeleteWarning] = useState<{ id: string; name: string; references: string[] } | null>(null);
   const [detailContact, setDetailContact] = useState<Contact | null>(null);
@@ -95,7 +97,7 @@ export default function Contacts() {
       notificationPlan: { ...plan.notificationPlan, orderedContactIds }
     };
 
-    await updatePlan(updatedPlan, editingContact ? 'Contact updated successfully' : 'Contact added successfully');
+    await updatePlan(updatedPlan, editingContact ? t('contacts.contactUpdated') : t('contacts.contactAdded'));
     closeModal();
   };
 
@@ -108,7 +110,7 @@ export default function Contacts() {
     if (references.length > 0) {
       setDeleteWarning({ id, name: contact.name, references });
     } else {
-      if (!confirm('Are you sure you want to delete this contact? This action cannot be undone.')) return;
+      if (!confirm(t('contacts.deleteConfirm'))) return;
       await performDelete(id);
     }
   };
@@ -124,7 +126,7 @@ export default function Contacts() {
       notificationPlan: { ...plan.notificationPlan, orderedContactIds }
     };
 
-    await updatePlan(updatedPlan, 'Contact deleted successfully');
+    await updatePlan(updatedPlan, t('contacts.contactDeleted'));
     setDeleteWarning(null);
   };
 
@@ -174,22 +176,22 @@ export default function Contacts() {
       <div className="space-y-4 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Contacts</h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">People who should be notified when you pass away</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('contacts.title')}</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">{t('contacts.description')}</p>
           </div>
-          <Button onClick={() => openModal()} className="sm:flex-shrink-0">Add Contact</Button>
+          <Button onClick={() => openModal()} className="sm:flex-shrink-0">{t('contacts.addContact')}</Button>
         </div>
 
         <WarningBanner>
-          Add contacts in the order they should be notified. Mark anyone who should be contacted before social media announcements.
+          {t('contacts.warningBanner')}
         </WarningBanner>
 
         {plan.contacts.length === 0 ? (
           <Card>
             <EmptyState
-              title="No contacts yet"
-              description="Add people who should be notified when you pass away"
-              actionLabel="Add Contact"
+              title={t('contacts.noContactsYet')}
+              description={t('contacts.noContactsDescription')}
+              actionLabel={t('contacts.addContact')}
               onAction={() => openModal()}
             />
           </Card>
@@ -230,7 +232,7 @@ export default function Contacts() {
                           onClick={() => handleMoveUp(index)}
                           disabled={index === 0}
                           className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                          title="Move up"
+                          title={t('contacts.moveUp')}
                         >
                           <ChevronUp className="w-4 h-4" />
                         </button>
@@ -238,7 +240,7 @@ export default function Contacts() {
                           onClick={() => handleMoveDown(index)}
                           disabled={index === plan.contacts.length - 1}
                           className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                          title="Move down"
+                          title={t('contacts.moveDown')}
                         >
                           <ChevronDown className="w-4 h-4" />
                         </button>
@@ -270,7 +272,7 @@ export default function Contacts() {
                           className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
                         >
                           <Info className="w-3 h-3" />
-                          <span>Used in {associations.totalCount} {associations.totalCount === 1 ? 'place' : 'places'}</span>
+                          <span>{t('contacts.usedInPlaces', { count: associations.totalCount, places: associations.totalCount === 1 ? t('contacts.place') : t('contacts.places') })}</span>
                         </button>
                       </div>
                     )}
@@ -280,13 +282,13 @@ export default function Contacts() {
                         onClick={() => openModal(contact)}
                         className="flex-1 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors"
                       >
-                        Edit
+                        {t('common.edit')}
                       </button>
                       <button
                         onClick={() => handleDelete(contact.id)}
                         className="flex-1 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
                       >
-                        Delete
+                        {t('common.delete')}
                       </button>
                     </div>
                   </div>
@@ -299,48 +301,48 @@ export default function Contacts() {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title={editingContact ? 'Edit Contact' : 'Add Contact'}
+          title={editingContact ? t('contacts.editContact') : t('contacts.addContact')}
           footer={
             <>
               <Button variant="secondary" onClick={closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleSave} disabled={!formData.name?.trim()}>
-                Save
+                {t('common.save')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Name"
+              label={t('contacts.name')}
               value={formData.name || ''}
               onChange={(e) => updateField('name', e.target.value)}
               required
             />
             <Input
-              label="Relationship"
+              label={t('contacts.relationship')}
               value={formData.relationship || ''}
               onChange={(e) => updateField('relationship', e.target.value)}
-              placeholder="e.g., Spouse, Friend, Sibling"
+              placeholder={t('contacts.relationshipPlaceholder')}
             />
             <Input
-              label="Phone"
+              label={t('contacts.phone')}
               type="tel"
               value={formData.phone || ''}
               onChange={(e) => updateField('phone', e.target.value)}
             />
             <Input
-              label="Email"
+              label={t('contacts.email')}
               type="email"
               value={formData.email || ''}
               onChange={(e) => updateField('email', e.target.value)}
             />
             <TextArea
-              label="Notes"
+              label={t('contacts.notes')}
               value={formData.notes || ''}
               onChange={(e) => updateField('notes', e.target.value)}
-              placeholder="Any special instructions or information"
+              placeholder={t('contacts.notesPlaceholder')}
             />
             <div className="flex items-center gap-2">
               <input
@@ -351,7 +353,7 @@ export default function Contacts() {
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <label htmlFor="notifyBeforeSocial" className="text-sm text-gray-700">
-                Contact before social media announcements
+                {t('contacts.notifyBeforeSocial')}
               </label>
             </div>
           </div>
@@ -361,14 +363,14 @@ export default function Contacts() {
           <Modal
             isOpen={true}
             onClose={() => setDeleteWarning(null)}
-            title="Cannot Delete Contact"
+            title={t('contacts.cannotDeleteContact')}
             footer={
               <>
                 <Button variant="secondary" onClick={() => setDeleteWarning(null)}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
-                  Delete Anyway
+                  {t('contacts.deleteAnyway')}
                 </Button>
               </>
             }
@@ -378,9 +380,9 @@ export default function Contacts() {
                 <div className="flex gap-3">
                   <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-yellow-900">This contact is referenced elsewhere</p>
+                    <p className="font-semibold text-yellow-900">{t('contacts.contactReferencedElsewhere')}</p>
                     <p className="text-sm text-yellow-800 mt-1">
-                      <strong>{deleteWarning.name}</strong> is used in:
+                      <strong>{deleteWarning.name}</strong> {t('contacts.contactUsedIn')}
                     </p>
                   </div>
                 </div>
@@ -391,7 +393,7 @@ export default function Contacts() {
                 ))}
               </ul>
               <p className="text-sm text-gray-600">
-                If you delete this contact, these references will become invalid. Consider updating them first.
+                {t('contacts.updateReferencesFirst')}
               </p>
             </div>
           </Modal>

@@ -6,6 +6,7 @@ import { Input } from '~/components/Input';
 import { Modal } from '~/components/Modal';
 import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { encryptPlan, decryptPlan } from '~/lib/crypto';
 import { generatePDF } from '~/lib/pdf-generator';
 import type { EncryptedData, Plan } from '~/types';
@@ -14,6 +15,7 @@ import { AlertTriangle } from 'lucide-react';
 
 export default function Export() {
   const { plan, savePlan } = useSession();
+  const { t } = useLanguage();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [exportPassphrase, setExportPassphrase] = useState('');
@@ -84,7 +86,7 @@ export default function Export() {
 
   const handleExportEncryptedJSON = async () => {
     if (!exportPassphrase) {
-      setError('Passphrase is required');
+      setError(t('export.errors.passphraseRequired'));
       return;
     }
 
@@ -111,11 +113,11 @@ export default function Export() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      setSuccess('Encrypted backup exported successfully');
+      setSuccess(t('export.success.encryptedExported'));
       setIsExportModalOpen(false);
       setExportPassphrase('');
     } catch (err) {
-      setError('Failed to export encrypted backup');
+      setError(t('export.errors.exportFailed'));
     } finally {
       setLoading(false);
     }
@@ -125,15 +127,15 @@ export default function Export() {
     try {
       if (!plan) return;
       generatePDF(plan, includeHighSensitivity);
-      setSuccess('PDF exported successfully');
+      setSuccess(t('export.success.pdfExported'));
     } catch (err) {
-      setError('Failed to generate PDF');
+      setError(t('export.errors.pdfFailed'));
     }
   };
 
   const handleImport = async () => {
     if (!importFile || !importPassphrase) {
-      setError('Please select a file and enter the passphrase');
+      setError(t('export.errors.importFileMissing'));
       return;
     }
 
@@ -145,7 +147,7 @@ export default function Export() {
       const jsonData = JSON.parse(fileContent);
 
       if (!jsonData.data || !jsonData.data.encrypted) {
-        throw new Error('Invalid backup file format. This does not appear to be a valid Life Binder backup.');
+        throw new Error(t('export.errors.invalidBackupFormat'));
       }
 
       const encryptedData: EncryptedData = jsonData.data;
@@ -156,25 +158,25 @@ export default function Export() {
         throw new Error(`Invalid plan data:\n${validation.errors.join('\n')}`);
       }
 
-      if (!confirm('This will replace your current plan. Are you sure?')) {
+      if (!confirm(t('export.replaceConfirm'))) {
         setLoading(false);
         return;
       }
 
       await savePlan(importedPlan as Plan);
-      setSuccess('Plan imported successfully');
+      setSuccess(t('export.importSuccess'));
       setIsImportModalOpen(false);
       setImportPassphrase('');
       setImportFile(null);
     } catch (err) {
       if (err instanceof Error && err.message.includes('Invalid plan data')) {
         setError(err.message);
-      } else if (err instanceof Error && err.message.includes('Invalid backup file format')) {
+      } else if (err instanceof Error && err.message.includes(t('export.errors.invalidBackupFormat'))) {
         setError(err.message);
       } else if (err instanceof SyntaxError) {
-        setError('Invalid JSON file. The file appears to be corrupted or not a valid backup.');
+        setError(t('export.errors.invalidJSON'));
       } else {
-        setError(err instanceof Error ? err.message : 'Failed to import. Check your passphrase and try again.');
+        setError(err instanceof Error ? err.message : t('export.errors.importError'));
       }
     } finally {
       setLoading(false);
@@ -188,9 +190,9 @@ export default function Export() {
       {plan && (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Export & Backup</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('export.title')}</h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Export your binder for backup or sharing
+            {t('export.description')}
           </p>
         </div>
 
@@ -206,21 +208,21 @@ export default function Export() {
           </div>
         )}
 
-        <Card title="PDF Export">
+        <Card title={t('export.pdfExport')}>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Generate a print-friendly PDF of your Life Binder runbook. Perfect for sharing with trusted individuals.
+              {t('export.pdfDescription')}
             </p>
 
             <WarningBanner type="info">
-              <strong>What's included:</strong>
+              <strong>{t('export.whatsIncluded')}</strong>
               <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>First 24 Hours action checklist</li>
-                <li>Priority contacts to notify</li>
-                <li>Access information (emails, password manager location, 2FA notes)</li>
-                <li>Critical accounts and billing warnings</li>
-                <li>Document locations</li>
-                <li>Emergency plan and contacts</li>
+                <li>{t('export.includeItem1')}</li>
+                <li>{t('export.includeItem2')}</li>
+                <li>{t('export.includeItem3')}</li>
+                <li>{t('export.includeItem4')}</li>
+                <li>{t('export.includeItem5')}</li>
+                <li>{t('export.includeItem6')}</li>
               </ul>
             </WarningBanner>
 
@@ -232,7 +234,7 @@ export default function Export() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-yellow-800">
-                      <strong>{highSensitivityCount}</strong> high-sensitivity document{highSensitivityCount !== 1 ? 's' : ''} will be excluded by default
+                      <strong>{highSensitivityCount}</strong> {highSensitivityCount !== 1 ? t('export.highSensitivityDocsPlural') : t('export.highSensitivityDocs')} {t('export.willBeExcluded')}
                     </p>
                     <label className="flex items-center gap-2 mt-3">
                       <input
@@ -242,7 +244,7 @@ export default function Export() {
                         className="rounded border-gray-300"
                       />
                       <span className="text-sm text-gray-700">
-                        Include high-sensitivity documents in PDF
+                        {t('export.includeHighSensitivity')}
                       </span>
                     </label>
                   </div>
@@ -251,81 +253,81 @@ export default function Export() {
             )}
 
             <Button onClick={handleExportPDF} className="w-full">
-              Generate PDF
+              {t('export.generatePDF')}
             </Button>
           </div>
         </Card>
 
-        <Card title="Encrypted JSON Backup">
+        <Card title={t('export.encryptedBackup')}>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Export an encrypted backup of your entire plan. Use this for secure backups or to transfer between devices.
+              {t('export.encryptedDescription')}
             </p>
 
             <WarningBanner type="warning">
-              <strong>Important:</strong> The exported file is encrypted with a passphrase. You can use the same passphrase as your main binder or create a different one for additional security.
+              <strong>{t('export.encryptedFileWarning')}</strong> {t('export.encryptedFileWarningText')}
             </WarningBanner>
 
             <Button onClick={() => { setIsExportModalOpen(true); setExportPassphrase(''); setError(''); setSuccess(''); }} className="w-full">
-              Export Encrypted Backup
+              {t('export.createBackup')}
             </Button>
           </div>
         </Card>
 
-        <Card title="Import Backup">
+        <Card title={t('export.importBackup')}>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Restore your binder from an encrypted backup file.
+              {t('export.importDescription')}
             </p>
 
             <WarningBanner type="error">
-              <strong>Warning:</strong> Importing will replace your current plan with the backup. Make sure to export your current plan first if needed.
+              <strong>{t('export.importWarningShort')}</strong> {t('export.importWarningTextShort')}
             </WarningBanner>
 
             <Button onClick={() => { setIsImportModalOpen(true); setImportPassphrase(''); setImportFile(null); setError(''); setSuccess(''); }} variant="secondary" className="w-full">
-              Import from Backup
+              {t('export.selectBackupFile')}
             </Button>
           </div>
         </Card>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">Backup Recommendations</h3>
+          <h3 className="font-semibold text-blue-900 mb-2">{t('export.recommendations.title')}</h3>
           <ul className="text-sm text-blue-800 space-y-2 list-disc list-inside">
-            <li>Export encrypted backups regularly (at least monthly)</li>
-            <li>Store backups in multiple secure locations (cloud storage, USB drive, etc.)</li>
-            <li>Generate PDF exports to share with trusted individuals</li>
-            <li>Keep your passphrases secure and accessible to trusted contacts</li>
-            <li>Review and update your binder after major life changes</li>
+            <li>{t('export.recommendations.item1')}</li>
+            <li>{t('export.recommendations.item2')}</li>
+            <li>{t('export.recommendations.item3')}</li>
+            <li>{t('export.recommendations.item4')}</li>
+            <li>{t('export.recommendations.item5')}</li>
           </ul>
         </div>
 
         <Modal
           isOpen={isExportModalOpen}
           onClose={() => setIsExportModalOpen(false)}
-          title="Export Encrypted Backup"
+          title={t('export.modal.exportTitle')}
           footer={
             <>
               <Button variant="secondary" onClick={() => setIsExportModalOpen(false)}>
-                Cancel
+                {t('export.modal.cancel')}
               </Button>
               <Button onClick={handleExportEncryptedJSON} disabled={loading}>
-                {loading ? 'Exporting...' : 'Export'}
+                {loading ? t('export.modal.exporting') : t('export.modal.export')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Enter a passphrase to encrypt the backup. You'll need this passphrase to import the backup later.
+              {t('export.modal.exportDescription')}
             </p>
 
             <Input
-              label="Export Passphrase"
+              label={t('export.modal.exportPassphraseLabel')}
               type="password"
               value={exportPassphrase}
               onChange={(e) => setExportPassphrase(e.target.value)}
-              placeholder="Enter a strong passphrase"
-              helpText="Can be the same or different from your main binder passphrase"
+              placeholder={t('export.modal.exportPassphrasePlaceholder')}
+              helpText={t('export.modal.exportPassphraseHelp')}
               required
             />
 
@@ -340,14 +342,14 @@ export default function Export() {
         <Modal
           isOpen={isImportModalOpen}
           onClose={() => setIsImportModalOpen(false)}
-          title="Import from Backup"
+          title={t('export.modal.importTitle')}
           footer={
             <>
               <Button variant="secondary" onClick={() => setIsImportModalOpen(false)}>
-                Cancel
+                {t('export.modal.cancel')}
               </Button>
               <Button onClick={handleImport} disabled={loading || !importFile}>
-                {loading ? 'Importing...' : 'Import'}
+                {loading ? t('export.modal.importing') : t('export.modal.import')}
               </Button>
             </>
           }
@@ -355,7 +357,7 @@ export default function Export() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Backup File
+                {t('export.modal.backupFileLabel')}
               </label>
               <input
                 type="file"
@@ -366,11 +368,11 @@ export default function Export() {
             </div>
 
             <Input
-              label="Passphrase"
+              label={t('export.modal.passphraseLabel')}
               type="password"
               value={importPassphrase}
               onChange={(e) => setImportPassphrase(e.target.value)}
-              placeholder="Enter the backup passphrase"
+              placeholder={t('export.modal.passphrasePlaceholder')}
               required
             />
 
@@ -381,7 +383,7 @@ export default function Export() {
             )}
 
             <WarningBanner type="error">
-              <strong>Warning:</strong> This will replace your current plan. This action cannot be undone.
+              <strong>{t('export.modal.importWarning')}</strong> {t('export.modal.importWarningText')}
             </WarningBanner>
           </div>
         </Modal>

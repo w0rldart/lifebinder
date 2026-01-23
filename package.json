@@ -1,7 +1,11 @@
 {
-  "name": "project",
+  "name": "lifebinder",
   "private": true,
   "type": "module",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/w0rldart"
+  },
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",

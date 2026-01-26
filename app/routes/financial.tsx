@@ -6,6 +6,7 @@ import { Input } from '~/components/Input';
 import { TextArea } from '~/components/TextArea';
 import { EmptyState } from '~/components/EmptyState';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
 import type {
@@ -47,6 +48,7 @@ interface FinancialItem {
 
 export default function Financial() {
   const { plan } = useSession();
+  const { t } = useLanguage();
   const { updatePlan } = usePlanUpdater();
   const [selectedCategories, setSelectedCategories] = useState<Set<Category>>(
     new Set(['banks', 'investments', 'retirement', 'insurance', 'debts', 'cards', 'safety', 'advisors', 'accountants', 'residual', 'crypto', 'taxes'])
@@ -161,18 +163,18 @@ export default function Financial() {
   });
 
   const categories = [
-    { id: 'banks' as Category, label: 'Bank Accounts', icon: '🏦', color: 'blue' },
-    { id: 'investments' as Category, label: 'Investments', icon: '📈', color: 'green' },
-    { id: 'retirement' as Category, label: 'Retirement', icon: '🎯', color: 'teal' },
-    { id: 'insurance' as Category, label: 'Insurance', icon: '🛡️', color: 'orange' },
-    { id: 'debts' as Category, label: 'Loans & Debts', icon: '📋', color: 'red' },
-    { id: 'cards' as Category, label: 'Credit Cards', icon: '💳', color: 'gray' },
-    { id: 'safety' as Category, label: 'Safe Deposit', icon: '🔐', color: 'slate' },
-    { id: 'advisors' as Category, label: 'Financial Advisors', icon: '👔', color: 'cyan' },
-    { id: 'accountants' as Category, label: 'Accountants', icon: '🧮', color: 'purple' },
-    { id: 'residual' as Category, label: 'Residual Income', icon: '💰', color: 'emerald' },
-    { id: 'crypto' as Category, label: 'Cryptocurrency', icon: '₿', color: 'yellow' },
-    { id: 'taxes' as Category, label: 'Tax Documents', icon: '📑', color: 'amber' },
+    { id: 'banks' as Category, label: t('financial.categories.banks'), icon: '🏦', color: 'blue' },
+    { id: 'investments' as Category, label: t('financial.categories.investments'), icon: '📈', color: 'green' },
+    { id: 'retirement' as Category, label: t('financial.categories.retirement'), icon: '🎯', color: 'teal' },
+    { id: 'insurance' as Category, label: t('financial.categories.insurance'), icon: '🛡️', color: 'orange' },
+    { id: 'debts' as Category, label: t('financial.categories.debts'), icon: '📋', color: 'red' },
+    { id: 'cards' as Category, label: t('financial.categories.cards'), icon: '💳', color: 'gray' },
+    { id: 'safety' as Category, label: t('financial.categories.safety'), icon: '🔐', color: 'slate' },
+    { id: 'advisors' as Category, label: t('financial.categories.advisors'), icon: '👔', color: 'cyan' },
+    { id: 'accountants' as Category, label: t('financial.categories.accountants'), icon: '🧮', color: 'purple' },
+    { id: 'residual' as Category, label: t('financial.categories.residual'), icon: '💰', color: 'emerald' },
+    { id: 'crypto' as Category, label: t('financial.categories.crypto'), icon: '₿', color: 'yellow' },
+    { id: 'taxes' as Category, label: t('financial.categories.taxes'), icon: '📑', color: 'amber' },
   ];
 
   const toggleCategory = (categoryId: Category) => {
@@ -252,15 +254,15 @@ export default function Financial() {
     const updated = bankForm.editingItem
       ? plan.financial.bankAccounts.map((b) => (b.id === bankForm.editingItem!.id ? item : b))
       : [...plan.financial.bankAccounts, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, bankAccounts: updated } }, 'Bank account saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, bankAccounts: updated } }, t('financial.messages.bankSaved'));
     bankForm.closeModal();
   };
 
   const handleDeleteBank = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this bank account? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.bank'))) return;
     const updated = plan.financial.bankAccounts.filter((b) => b.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, bankAccounts: updated } }, 'Bank account deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, bankAccounts: updated } }, t('financial.messages.bankDeleted'));
   };
 
   const handleSaveInvestment = async () => {
@@ -277,15 +279,15 @@ export default function Financial() {
     const updated = investmentForm.editingItem
       ? plan.financial.investments.map((i) => (i.id === investmentForm.editingItem!.id ? item : i))
       : [...plan.financial.investments, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, investments: updated } }, 'Investment saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, investments: updated } }, t('financial.messages.investmentSaved'));
     investmentForm.closeModal();
   };
 
   const handleDeleteInvestment = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this investment? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.investment'))) return;
     const updated = plan.financial.investments.filter((i) => i.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, investments: updated } }, 'Investment deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, investments: updated } }, t('financial.messages.investmentDeleted'));
   };
 
   const handleSaveRetirement = async () => {
@@ -302,15 +304,15 @@ export default function Financial() {
     const updated = retirementForm.editingItem
       ? plan.financial.retirementAccounts.map((r) => (r.id === retirementForm.editingItem!.id ? item : r))
       : [...plan.financial.retirementAccounts, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, retirementAccounts: updated } }, 'Retirement account saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, retirementAccounts: updated } }, t('financial.messages.retirementSaved'));
     retirementForm.closeModal();
   };
 
   const handleDeleteRetirement = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this retirement account? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.retirement'))) return;
     const updated = plan.financial.retirementAccounts.filter((r) => r.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, retirementAccounts: updated } }, 'Retirement account deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, retirementAccounts: updated } }, t('financial.messages.retirementDeleted'));
   };
 
   const handleSaveInsurance = async () => {
@@ -327,15 +329,15 @@ export default function Financial() {
     const updated = insuranceForm.editingItem
       ? plan.financial.insurancePolicies.map((i) => (i.id === insuranceForm.editingItem!.id ? item : i))
       : [...plan.financial.insurancePolicies, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, insurancePolicies: updated } }, 'Insurance policy saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, insurancePolicies: updated } }, t('financial.messages.insuranceSaved'));
     insuranceForm.closeModal();
   };
 
   const handleDeleteInsurance = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this insurance policy? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.insurance'))) return;
     const updated = plan.financial.insurancePolicies.filter((i) => i.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, insurancePolicies: updated } }, 'Insurance policy deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, insurancePolicies: updated } }, t('financial.messages.insuranceDeleted'));
   };
 
   const handleSaveDebt = async () => {
@@ -353,15 +355,15 @@ export default function Financial() {
     const updated = debtForm.editingItem
       ? plan.financial.loansDebts.map((d) => (d.id === debtForm.editingItem!.id ? item : d))
       : [...plan.financial.loansDebts, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, loansDebts: updated } }, 'Debt saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, loansDebts: updated } }, t('financial.messages.debtSaved'));
     debtForm.closeModal();
   };
 
   const handleDeleteDebt = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this debt? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.debt'))) return;
     const updated = plan.financial.loansDebts.filter((d) => d.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, loansDebts: updated } }, 'Debt deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, loansDebts: updated } }, t('financial.messages.debtDeleted'));
   };
 
   const handleSaveCard = async () => {
@@ -377,15 +379,15 @@ export default function Financial() {
     const updated = cardForm.editingItem
       ? plan.financial.creditCards.map((c) => (c.id === cardForm.editingItem!.id ? item : c))
       : [...plan.financial.creditCards, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, creditCards: updated } }, 'Credit card saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, creditCards: updated } }, t('financial.messages.cardSaved'));
     cardForm.closeModal();
   };
 
   const handleDeleteCard = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this credit card? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.card'))) return;
     const updated = plan.financial.creditCards.filter((c) => c.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, creditCards: updated } }, 'Credit card deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, creditCards: updated } }, t('financial.messages.cardDeleted'));
   };
 
   const handleSaveSafety = async () => {
@@ -401,15 +403,15 @@ export default function Financial() {
     const updated = safetyForm.editingItem
       ? plan.financial.safeDepositBoxes.map((s) => (s.id === safetyForm.editingItem!.id ? item : s))
       : [...plan.financial.safeDepositBoxes, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, safeDepositBoxes: updated } }, 'Safe deposit box saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, safeDepositBoxes: updated } }, t('financial.messages.safetySaved'));
     safetyForm.closeModal();
   };
 
   const handleDeleteSafety = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this safe deposit box? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.safety'))) return;
     const updated = plan.financial.safeDepositBoxes.filter((s) => s.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, safeDepositBoxes: updated } }, 'Safe deposit box deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, safeDepositBoxes: updated } }, t('financial.messages.safetyDeleted'));
   };
 
   const handleSaveAdvisor = async () => {
@@ -426,15 +428,15 @@ export default function Financial() {
     const updated = advisorForm.editingItem
       ? plan.financial.financialAdvisors.map((a) => (a.id === advisorForm.editingItem!.id ? item : a))
       : [...plan.financial.financialAdvisors, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, financialAdvisors: updated } }, 'Financial advisor saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, financialAdvisors: updated } }, t('financial.messages.advisorSaved'));
     advisorForm.closeModal();
   };
 
   const handleDeleteAdvisor = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this financial advisor? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.advisor'))) return;
     const updated = plan.financial.financialAdvisors.filter((a) => a.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, financialAdvisors: updated } }, 'Financial advisor deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, financialAdvisors: updated } }, t('financial.messages.advisorDeleted'));
   };
 
   const handleSaveTax = async () => {
@@ -450,15 +452,15 @@ export default function Financial() {
     const updated = taxForm.editingItem
       ? plan.financial.taxDocuments.map((t) => (t.id === taxForm.editingItem!.id ? item : t))
       : [...plan.financial.taxDocuments, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, taxDocuments: updated } }, 'Tax document saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, taxDocuments: updated } }, t('financial.messages.taxSaved'));
     taxForm.closeModal();
   };
 
   const handleDeleteTax = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this tax document? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.tax'))) return;
     const updated = plan.financial.taxDocuments.filter((t) => t.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, taxDocuments: updated } }, 'Tax document deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, taxDocuments: updated } }, t('financial.messages.taxDeleted'));
   };
 
   const handleSaveAccountant = async () => {
@@ -477,15 +479,15 @@ export default function Financial() {
     const updated = accountantForm.editingItem
       ? plan.financial.accountants.map((a) => (a.id === accountantForm.editingItem!.id ? item : a))
       : [...plan.financial.accountants, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, accountants: updated } }, 'Accountant saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, accountants: updated } }, t('financial.messages.accountantSaved'));
     accountantForm.closeModal();
   };
 
   const handleDeleteAccountant = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this accountant? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.accountant'))) return;
     const updated = plan.financial.accountants.filter((a) => a.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, accountants: updated } }, 'Accountant deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, accountants: updated } }, t('financial.messages.accountantDeleted'));
   };
 
   const handleSaveResidual = async () => {
@@ -502,15 +504,15 @@ export default function Financial() {
     const updated = residualForm.editingItem
       ? plan.financial.residualIncome.map((r) => (r.id === residualForm.editingItem!.id ? item : r))
       : [...plan.financial.residualIncome, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, residualIncome: updated } }, 'Residual income saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, residualIncome: updated } }, t('financial.messages.residualSaved'));
     residualForm.closeModal();
   };
 
   const handleDeleteResidual = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this residual income source? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.residual'))) return;
     const updated = plan.financial.residualIncome.filter((r) => r.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, residualIncome: updated } }, 'Residual income deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, residualIncome: updated } }, t('financial.messages.residualDeleted'));
   };
 
   const handleSaveCrypto = async () => {
@@ -526,15 +528,15 @@ export default function Financial() {
     const updated = cryptoForm.editingItem
       ? plan.financial.cryptocurrency.map((c) => (c.id === cryptoForm.editingItem!.id ? item : c))
       : [...plan.financial.cryptocurrency, item];
-    await updatePlan({ ...plan, financial: { ...plan.financial, cryptocurrency: updated } }, 'Cryptocurrency saved');
+    await updatePlan({ ...plan, financial: { ...plan.financial, cryptocurrency: updated } }, t('financial.messages.cryptoSaved'));
     cryptoForm.closeModal();
   };
 
   const handleDeleteCrypto = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this cryptocurrency holding? This action cannot be undone.')) return;
+    if (!confirm(t('financial.confirmDelete.crypto'))) return;
     const updated = plan.financial.cryptocurrency.filter((c) => c.id !== id);
-    await updatePlan({ ...plan, financial: { ...plan.financial, cryptocurrency: updated } }, 'Cryptocurrency deleted');
+    await updatePlan({ ...plan, financial: { ...plan.financial, cryptocurrency: updated } }, t('financial.messages.cryptoDeleted'));
   };
 
   const renderCard = (item: FinancialItem) => {
@@ -725,12 +727,12 @@ export default function Financial() {
         <div className="space-y-4 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Financial Information</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">{t('financial.title')}</h1>
               <p className="text-sm sm:text-base text-gray-600">
-                Track bank accounts, investments, retirement plans, insurance, debts, and more
+                {t('financial.description')}
               </p>
             </div>
-            <Button onClick={() => setShowAddModal(true)} className="sm:flex-shrink-0">Add Item</Button>
+            <Button onClick={() => setShowAddModal(true)} className="sm:flex-shrink-0">{t('financial.addItem')}</Button>
           </div>
 
           <div className="bg-white rounded-lg shadow p-4">
@@ -743,7 +745,7 @@ export default function Financial() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                All
+                {t('financial.all')}
               </button>
               {categories.map((category) => {
                 const isSelected = selectedCategories.has(category.id);
@@ -771,13 +773,13 @@ export default function Financial() {
 
           {allItems.length === 0 ? (
             <EmptyState
-              title="No financial items yet"
+              title={t('financial.noItemsYet')}
               description={
                 selectedCategories.size === 0
-                  ? 'Select at least one category to view items'
-                  : 'Add your first financial item to get started'
+                  ? t('financial.selectCategory')
+                  : t('financial.addFirstItem')
               }
-              actionLabel="Add Item"
+              actionLabel={t('financial.addItem')}
               onAction={() => setShowAddModal(true)}
             />
           ) : (
@@ -789,10 +791,10 @@ export default function Financial() {
           <Modal
             isOpen={showAddModal}
             onClose={() => setShowAddModal(false)}
-            title="Add Financial Item"
+            title={t('financial.addFinancialItem')}
           >
             <div className="space-y-2">
-              <p className="text-sm text-gray-600 mb-4">Select the type of financial item you want to add:</p>
+              <p className="text-sm text-gray-600 mb-4">{t('financial.selectType')}</p>
               {categories.map((category) => (
                 <button
                   key={category.id}
@@ -822,254 +824,254 @@ export default function Financial() {
           <Modal
             isOpen={bankForm.isModalOpen}
             onClose={bankForm.closeModal}
-            title={bankForm.editingItem ? 'Edit Bank Account' : 'Add Bank Account'}
+            title={bankForm.editingItem ? t('financial.modals.editBank') : t('financial.modals.addBank')}
             footer={
               <>
-                <Button variant="secondary" onClick={bankForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveBank} disabled={!bankForm.formData.institution?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={bankForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveBank} disabled={!bankForm.formData.institution?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Institution" value={bankForm.formData.institution || ''} onChange={(e) => bankForm.updateField('institution', e.target.value)} required />
-              <Input label="Account Type" value={bankForm.formData.accountType || ''} onChange={(e) => bankForm.updateField('accountType', e.target.value)} placeholder="Checking, Savings, etc." />
-              <Input label="Account Number" value={bankForm.formData.accountNumber || ''} onChange={(e) => bankForm.updateField('accountNumber', e.target.value)} placeholder="Last 4 digits or masked number" />
-              <Input label="Routing Number" value={bankForm.formData.routingNumber || ''} onChange={(e) => bankForm.updateField('routingNumber', e.target.value)} />
-              <Input label="Contact Info" value={bankForm.formData.contactInfo || ''} onChange={(e) => bankForm.updateField('contactInfo', e.target.value)} placeholder="Phone or website" />
-              <TextArea label="Notes" value={bankForm.formData.notes || ''} onChange={(e) => bankForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.institution')} value={bankForm.formData.institution || ''} onChange={(e) => bankForm.updateField('institution', e.target.value)} required />
+              <Input label={t('financial.fields.accountType')} value={bankForm.formData.accountType || ''} onChange={(e) => bankForm.updateField('accountType', e.target.value)} placeholder={t('financial.fields.accountTypePlaceholder')} />
+              <Input label={t('financial.fields.accountNumber')} value={bankForm.formData.accountNumber || ''} onChange={(e) => bankForm.updateField('accountNumber', e.target.value)} placeholder={t('financial.fields.accountNumberPlaceholder')} />
+              <Input label={t('financial.fields.routingNumber')} value={bankForm.formData.routingNumber || ''} onChange={(e) => bankForm.updateField('routingNumber', e.target.value)} />
+              <Input label={t('financial.fields.contactInfo')} value={bankForm.formData.contactInfo || ''} onChange={(e) => bankForm.updateField('contactInfo', e.target.value)} placeholder={t('financial.fields.contactInfoPlaceholder')} />
+              <TextArea label={t('financial.fields.notes')} value={bankForm.formData.notes || ''} onChange={(e) => bankForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={investmentForm.isModalOpen}
             onClose={investmentForm.closeModal}
-            title={investmentForm.editingItem ? 'Edit Investment' : 'Add Investment'}
+            title={investmentForm.editingItem ? t('financial.modals.editInvestment') : t('financial.modals.addInvestment')}
             footer={
               <>
-                <Button variant="secondary" onClick={investmentForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveInvestment} disabled={!investmentForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={investmentForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveInvestment} disabled={!investmentForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Type" value={investmentForm.formData.type || ''} onChange={(e) => investmentForm.updateField('type', e.target.value)} placeholder="Brokerage, Mutual Fund, Stocks, etc." required />
-              <Input label="Institution" value={investmentForm.formData.institution || ''} onChange={(e) => investmentForm.updateField('institution', e.target.value)} />
-              <Input label="Account Number" value={investmentForm.formData.accountNumber || ''} onChange={(e) => investmentForm.updateField('accountNumber', e.target.value)} />
-              <Input label="Estimated Value" value={investmentForm.formData.estimatedValue || ''} onChange={(e) => investmentForm.updateField('estimatedValue', e.target.value)} placeholder="$50,000" />
-              <Input label="Beneficiaries" value={investmentForm.formData.beneficiaries || ''} onChange={(e) => investmentForm.updateField('beneficiaries', e.target.value)} />
-              <TextArea label="Notes" value={investmentForm.formData.notes || ''} onChange={(e) => investmentForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.type')} value={investmentForm.formData.type || ''} onChange={(e) => investmentForm.updateField('type', e.target.value)} placeholder={t('financial.fields.typePlaceholder')} required />
+              <Input label={t('financial.fields.institution')} value={investmentForm.formData.institution || ''} onChange={(e) => investmentForm.updateField('institution', e.target.value)} />
+              <Input label={t('financial.fields.accountNumber')} value={investmentForm.formData.accountNumber || ''} onChange={(e) => investmentForm.updateField('accountNumber', e.target.value)} />
+              <Input label={t('financial.fields.estimatedValue')} value={investmentForm.formData.estimatedValue || ''} onChange={(e) => investmentForm.updateField('estimatedValue', e.target.value)} />
+              <Input label={t('financial.fields.beneficiaries')} value={investmentForm.formData.beneficiaries || ''} onChange={(e) => investmentForm.updateField('beneficiaries', e.target.value)} />
+              <TextArea label={t('financial.fields.notes')} value={investmentForm.formData.notes || ''} onChange={(e) => investmentForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={retirementForm.isModalOpen}
             onClose={retirementForm.closeModal}
-            title={retirementForm.editingItem ? 'Edit Retirement Account' : 'Add Retirement Account'}
+            title={retirementForm.editingItem ? t('financial.modals.editRetirement') : t('financial.modals.addRetirement')}
             footer={
               <>
-                <Button variant="secondary" onClick={retirementForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveRetirement} disabled={!retirementForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={retirementForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveRetirement} disabled={!retirementForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Type" value={retirementForm.formData.type || ''} onChange={(e) => retirementForm.updateField('type', e.target.value)} placeholder="401(k), IRA, Roth IRA, 3rd Pillar, Pension, etc." required />
-              <Input label="Institution" value={retirementForm.formData.institution || ''} onChange={(e) => retirementForm.updateField('institution', e.target.value)} />
-              <Input label="Account Number" value={retirementForm.formData.accountNumber || ''} onChange={(e) => retirementForm.updateField('accountNumber', e.target.value)} />
-              <Input label="Estimated Value" value={retirementForm.formData.estimatedValue || ''} onChange={(e) => retirementForm.updateField('estimatedValue', e.target.value)} placeholder="$250,000" />
-              <Input label="Beneficiaries" value={retirementForm.formData.beneficiaries || ''} onChange={(e) => retirementForm.updateField('beneficiaries', e.target.value)} />
-              <TextArea label="Notes" value={retirementForm.formData.notes || ''} onChange={(e) => retirementForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.type')} value={retirementForm.formData.type || ''} onChange={(e) => retirementForm.updateField('type', e.target.value)} placeholder={t('financial.fields.retirementTypePlaceholder')} required />
+              <Input label={t('financial.fields.institution')} value={retirementForm.formData.institution || ''} onChange={(e) => retirementForm.updateField('institution', e.target.value)} />
+              <Input label={t('financial.fields.accountNumber')} value={retirementForm.formData.accountNumber || ''} onChange={(e) => retirementForm.updateField('accountNumber', e.target.value)} />
+              <Input label={t('financial.fields.estimatedValue')} value={retirementForm.formData.estimatedValue || ''} onChange={(e) => retirementForm.updateField('estimatedValue', e.target.value)} />
+              <Input label={t('financial.fields.beneficiaries')} value={retirementForm.formData.beneficiaries || ''} onChange={(e) => retirementForm.updateField('beneficiaries', e.target.value)} />
+              <TextArea label={t('financial.fields.notes')} value={retirementForm.formData.notes || ''} onChange={(e) => retirementForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={insuranceForm.isModalOpen}
             onClose={insuranceForm.closeModal}
-            title={insuranceForm.editingItem ? 'Edit Insurance Policy' : 'Add Insurance Policy'}
+            title={insuranceForm.editingItem ? t('financial.modals.editInsurance') : t('financial.modals.addInsurance')}
             footer={
               <>
-                <Button variant="secondary" onClick={insuranceForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveInsurance} disabled={!insuranceForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={insuranceForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveInsurance} disabled={!insuranceForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Type" value={insuranceForm.formData.type || ''} onChange={(e) => insuranceForm.updateField('type', e.target.value)} placeholder="Life, Auto, Home, Health, etc." required />
-              <Input label="Provider" value={insuranceForm.formData.provider || ''} onChange={(e) => insuranceForm.updateField('provider', e.target.value)} />
-              <Input label="Policy Number" value={insuranceForm.formData.policyNumber || ''} onChange={(e) => insuranceForm.updateField('policyNumber', e.target.value)} />
-              <Input label="Coverage Amount" value={insuranceForm.formData.coverageAmount || ''} onChange={(e) => insuranceForm.updateField('coverageAmount', e.target.value)} placeholder="$500,000" />
-              <Input label="Beneficiaries" value={insuranceForm.formData.beneficiaries || ''} onChange={(e) => insuranceForm.updateField('beneficiaries', e.target.value)} />
-              <TextArea label="Notes" value={insuranceForm.formData.notes || ''} onChange={(e) => insuranceForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.type')} value={insuranceForm.formData.type || ''} onChange={(e) => insuranceForm.updateField('type', e.target.value)} placeholder={t('financial.fields.insuranceTypePlaceholder')} required />
+              <Input label={t('financial.fields.provider')} value={insuranceForm.formData.provider || ''} onChange={(e) => insuranceForm.updateField('provider', e.target.value)} />
+              <Input label={t('financial.fields.policyNumber')} value={insuranceForm.formData.policyNumber || ''} onChange={(e) => insuranceForm.updateField('policyNumber', e.target.value)} />
+              <Input label={t('financial.fields.coverageAmount')} value={insuranceForm.formData.coverageAmount || ''} onChange={(e) => insuranceForm.updateField('coverageAmount', e.target.value)} />
+              <Input label={t('financial.fields.beneficiaries')} value={insuranceForm.formData.beneficiaries || ''} onChange={(e) => insuranceForm.updateField('beneficiaries', e.target.value)} />
+              <TextArea label={t('financial.fields.notes')} value={insuranceForm.formData.notes || ''} onChange={(e) => insuranceForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={debtForm.isModalOpen}
             onClose={debtForm.closeModal}
-            title={debtForm.editingItem ? 'Edit Loan/Debt' : 'Add Loan/Debt'}
+            title={debtForm.editingItem ? t('financial.modals.editDebt') : t('financial.modals.addDebt')}
             footer={
               <>
-                <Button variant="secondary" onClick={debtForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveDebt} disabled={!debtForm.formData.type?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={debtForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveDebt} disabled={!debtForm.formData.type?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Type" value={debtForm.formData.type || ''} onChange={(e) => debtForm.updateField('type', e.target.value)} placeholder="Mortgage, Personal Loan, Student Loan, etc." required />
-              <Input label="Lender" value={debtForm.formData.lender || ''} onChange={(e) => debtForm.updateField('lender', e.target.value)} />
-              <Input label="Account Number" value={debtForm.formData.accountNumber || ''} onChange={(e) => debtForm.updateField('accountNumber', e.target.value)} />
-              <Input label="Balance" value={debtForm.formData.balance || ''} onChange={(e) => debtForm.updateField('balance', e.target.value)} placeholder="$25,000" />
-              <Input label="Payment Details" value={debtForm.formData.paymentDetails || ''} onChange={(e) => debtForm.updateField('paymentDetails', e.target.value)} placeholder="$500/month, 5% APR" />
-              <Input label="Co-Signers" value={debtForm.formData.coSigners || ''} onChange={(e) => debtForm.updateField('coSigners', e.target.value)} />
-              <TextArea label="Notes" value={debtForm.formData.notes || ''} onChange={(e) => debtForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.type')} value={debtForm.formData.type || ''} onChange={(e) => debtForm.updateField('type', e.target.value)} placeholder={t('financial.fields.debtTypePlaceholder')} required />
+              <Input label={t('financial.fields.lender')} value={debtForm.formData.lender || ''} onChange={(e) => debtForm.updateField('lender', e.target.value)} />
+              <Input label={t('financial.fields.accountNumber')} value={debtForm.formData.accountNumber || ''} onChange={(e) => debtForm.updateField('accountNumber', e.target.value)} />
+              <Input label={t('financial.fields.balance')} value={debtForm.formData.balance || ''} onChange={(e) => debtForm.updateField('balance', e.target.value)} />
+              <Input label={t('financial.fields.paymentDetails')} value={debtForm.formData.paymentDetails || ''} onChange={(e) => debtForm.updateField('paymentDetails', e.target.value)} placeholder={t('financial.fields.paymentDetailsPlaceholder')} />
+              <Input label={t('financial.fields.coSigners')} value={debtForm.formData.coSigners || ''} onChange={(e) => debtForm.updateField('coSigners', e.target.value)} />
+              <TextArea label={t('financial.fields.notes')} value={debtForm.formData.notes || ''} onChange={(e) => debtForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={cardForm.isModalOpen}
             onClose={cardForm.closeModal}
-            title={cardForm.editingItem ? 'Edit Credit Card' : 'Add Credit Card'}
+            title={cardForm.editingItem ? t('financial.modals.editCard') : t('financial.modals.addCard')}
             footer={
               <>
-                <Button variant="secondary" onClick={cardForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveCard} disabled={!cardForm.formData.issuer?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={cardForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveCard} disabled={!cardForm.formData.issuer?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Issuer" value={cardForm.formData.issuer || ''} onChange={(e) => cardForm.updateField('issuer', e.target.value)} placeholder="Chase, Amex, etc." required />
-              <Input label="Last 4 Digits" value={cardForm.formData.lastFourDigits || ''} onChange={(e) => cardForm.updateField('lastFourDigits', e.target.value)} maxLength={4} />
-              <Input label="Credit Limit" value={cardForm.formData.creditLimit || ''} onChange={(e) => cardForm.updateField('creditLimit', e.target.value)} placeholder="$10,000" />
-              <Input label="Payment Info" value={cardForm.formData.paymentInfo || ''} onChange={(e) => cardForm.updateField('paymentInfo', e.target.value)} placeholder="Autopay setup, due date, etc." />
-              <TextArea label="Notes" value={cardForm.formData.notes || ''} onChange={(e) => cardForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.issuer')} value={cardForm.formData.issuer || ''} onChange={(e) => cardForm.updateField('issuer', e.target.value)} required />
+              <Input label={t('financial.fields.lastFourDigits')} value={cardForm.formData.lastFourDigits || ''} onChange={(e) => cardForm.updateField('lastFourDigits', e.target.value)} maxLength={4} />
+              <Input label={t('financial.fields.creditLimit')} value={cardForm.formData.creditLimit || ''} onChange={(e) => cardForm.updateField('creditLimit', e.target.value)} />
+              <Input label={t('financial.fields.contactInfo')} value={cardForm.formData.paymentInfo || ''} onChange={(e) => cardForm.updateField('paymentInfo', e.target.value)} />
+              <TextArea label={t('financial.fields.notes')} value={cardForm.formData.notes || ''} onChange={(e) => cardForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={safetyForm.isModalOpen}
             onClose={safetyForm.closeModal}
-            title={safetyForm.editingItem ? 'Edit Safe Deposit Box' : 'Add Safe Deposit Box'}
+            title={safetyForm.editingItem ? t('financial.modals.editSafety') : t('financial.modals.addSafety')}
             footer={
               <>
-                <Button variant="secondary" onClick={safetyForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveSafety} disabled={!safetyForm.formData.bankLocation?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={safetyForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveSafety} disabled={!safetyForm.formData.bankLocation?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Bank Location" value={safetyForm.formData.bankLocation || ''} onChange={(e) => safetyForm.updateField('bankLocation', e.target.value)} placeholder="First National Bank, Downtown Branch" required />
-              <Input label="Box Number" value={safetyForm.formData.boxNumber || ''} onChange={(e) => safetyForm.updateField('boxNumber', e.target.value)} />
-              <Input label="Key Location" value={safetyForm.formData.keyLocation || ''} onChange={(e) => safetyForm.updateField('keyLocation', e.target.value)} placeholder="Home office desk drawer" />
-              <TextArea label="Contents" value={safetyForm.formData.contents || ''} onChange={(e) => safetyForm.updateField('contents', e.target.value)} placeholder="List important items stored in the box" rows={3} />
-              <TextArea label="Notes" value={safetyForm.formData.notes || ''} onChange={(e) => safetyForm.updateField('notes', e.target.value)} rows={2} />
+              <Input label={t('financial.fields.bankName')} value={safetyForm.formData.bankLocation || ''} onChange={(e) => safetyForm.updateField('bankLocation', e.target.value)} required />
+              <Input label={t('financial.fields.boxNumber')} value={safetyForm.formData.boxNumber || ''} onChange={(e) => safetyForm.updateField('boxNumber', e.target.value)} />
+              <Input label={t('financial.fields.keyLocation')} value={safetyForm.formData.keyLocation || ''} onChange={(e) => safetyForm.updateField('keyLocation', e.target.value)} placeholder={t('financial.fields.keyLocationPlaceholder')} />
+              <TextArea label={t('financial.fields.contents')} value={safetyForm.formData.contents || ''} onChange={(e) => safetyForm.updateField('contents', e.target.value)} placeholder={t('financial.fields.contentsPlaceholder')} rows={3} />
+              <TextArea label={t('financial.fields.notes')} value={safetyForm.formData.notes || ''} onChange={(e) => safetyForm.updateField('notes', e.target.value)} rows={2} />
             </div>
           </Modal>
 
           <Modal
             isOpen={advisorForm.isModalOpen}
             onClose={advisorForm.closeModal}
-            title={advisorForm.editingItem ? 'Edit Financial Advisor' : 'Add Financial Advisor'}
+            title={advisorForm.editingItem ? t('financial.modals.editAdvisor') : t('financial.modals.addAdvisor')}
             footer={
               <>
-                <Button variant="secondary" onClick={advisorForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveAdvisor} disabled={!advisorForm.formData.name?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={advisorForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveAdvisor} disabled={!advisorForm.formData.name?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Name" value={advisorForm.formData.name || ''} onChange={(e) => advisorForm.updateField('name', e.target.value)} required />
-              <Input label="Company" value={advisorForm.formData.company || ''} onChange={(e) => advisorForm.updateField('company', e.target.value)} />
-              <Input label="Phone" type="tel" value={advisorForm.formData.phone || ''} onChange={(e) => advisorForm.updateField('phone', e.target.value)} />
-              <Input label="Email" type="email" value={advisorForm.formData.email || ''} onChange={(e) => advisorForm.updateField('email', e.target.value)} />
-              <Input label="Services Provided" value={advisorForm.formData.servicesProvided || ''} onChange={(e) => advisorForm.updateField('servicesProvided', e.target.value)} placeholder="Investment management, tax planning, etc." />
-              <TextArea label="Notes" value={advisorForm.formData.notes || ''} onChange={(e) => advisorForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.fields.name')} value={advisorForm.formData.name || ''} onChange={(e) => advisorForm.updateField('name', e.target.value)} required />
+              <Input label={t('financial.fields.company')} value={advisorForm.formData.company || ''} onChange={(e) => advisorForm.updateField('company', e.target.value)} />
+              <Input label={t('financial.fields.phone')} type="tel" value={advisorForm.formData.phone || ''} onChange={(e) => advisorForm.updateField('phone', e.target.value)} />
+              <Input label={t('financial.fields.email')} type="email" value={advisorForm.formData.email || ''} onChange={(e) => advisorForm.updateField('email', e.target.value)} />
+              <Input label={t('financial.fields.servicesProvided')} value={advisorForm.formData.servicesProvided || ''} onChange={(e) => advisorForm.updateField('servicesProvided', e.target.value)} placeholder={t('financial.fields.servicesProvidedPlaceholder')} />
+              <TextArea label={t('financial.fields.notes')} value={advisorForm.formData.notes || ''} onChange={(e) => advisorForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={taxForm.isModalOpen}
             onClose={taxForm.closeModal}
-            title={taxForm.editingItem ? 'Edit Tax Document' : 'Add Tax Document'}
+            title={taxForm.editingItem ? t('financial.modals.editTax') : t('financial.modals.addTax')}
             footer={
               <>
-                <Button variant="secondary" onClick={taxForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveTax} disabled={!taxForm.formData.year?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={taxForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveTax} disabled={!taxForm.formData.year?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Tax Year" value={taxForm.formData.year || ''} onChange={(e) => taxForm.updateField('year', e.target.value)} placeholder="2023" required />
-              <Input label="Location" value={taxForm.formData.location || ''} onChange={(e) => taxForm.updateField('location', e.target.value)} placeholder="~/Documents/Taxes/2023/" />
-              <Input label="Preparer Name" value={taxForm.formData.preparerName || ''} onChange={(e) => taxForm.updateField('preparerName', e.target.value)} />
-              <Input label="Preparer Contact" value={taxForm.formData.preparerContact || ''} onChange={(e) => taxForm.updateField('preparerContact', e.target.value)} placeholder="Phone or email" />
-              <TextArea label="Notes" value={taxForm.formData.notes || ''} onChange={(e) => taxForm.updateField('notes', e.target.value)} placeholder="Filed date, refund/owed amount, special circumstances" rows={3} />
+              <Input label={t('financial.fields.taxYear')} value={taxForm.formData.year || ''} onChange={(e) => taxForm.updateField('year', e.target.value)} placeholder={t('financial.fields.yearPlaceholder')} required />
+              <Input label={t('financial.fields.location')} value={taxForm.formData.location || ''} onChange={(e) => taxForm.updateField('location', e.target.value)} placeholder={t('financial.fields.locationPlaceholder')} />
+              <Input label={t('financial.fields.preparerName')} value={taxForm.formData.preparerName || ''} onChange={(e) => taxForm.updateField('preparerName', e.target.value)} />
+              <Input label={t('financial.fields.preparerContact')} value={taxForm.formData.preparerContact || ''} onChange={(e) => taxForm.updateField('preparerContact', e.target.value)} />
+              <TextArea label={t('financial.fields.notes')} value={taxForm.formData.notes || ''} onChange={(e) => taxForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={accountantForm.isModalOpen}
             onClose={accountantForm.closeModal}
-            title={accountantForm.editingItem ? 'Edit Accountant' : 'Add Accountant'}
+            title={accountantForm.editingItem ? t('financial.modals.editAccountant') : t('financial.modals.addAccountant')}
             footer={
               <>
-                <Button variant="secondary" onClick={accountantForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveAccountant} disabled={!accountantForm.formData.name?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={accountantForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveAccountant} disabled={!accountantForm.formData.name?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Name" value={accountantForm.formData.name || ''} onChange={(e) => accountantForm.updateField('name', e.target.value)} required />
-              <Input label="Company" value={accountantForm.formData.company || ''} onChange={(e) => accountantForm.updateField('company', e.target.value)} />
-              <Input label="Phone" type="tel" value={accountantForm.formData.phone || ''} onChange={(e) => accountantForm.updateField('phone', e.target.value)} />
-              <Input label="Email" type="email" value={accountantForm.formData.email || ''} onChange={(e) => accountantForm.updateField('email', e.target.value)} />
+              <Input label={t('financial.fields.name')} value={accountantForm.formData.name || ''} onChange={(e) => accountantForm.updateField('name', e.target.value)} required />
+              <Input label={t('financial.fields.company')} value={accountantForm.formData.company || ''} onChange={(e) => accountantForm.updateField('company', e.target.value)} />
+              <Input label={t('financial.fields.phone')} type="tel" value={accountantForm.formData.phone || ''} onChange={(e) => accountantForm.updateField('phone', e.target.value)} />
+              <Input label={t('financial.fields.email')} type="email" value={accountantForm.formData.email || ''} onChange={(e) => accountantForm.updateField('email', e.target.value)} />
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={accountantForm.formData.hasTaxHistoryAccess || false} onChange={(e) => accountantForm.updateField('hasTaxHistoryAccess', e.target.checked)} className="rounded border-gray-300" />
-                <span className="text-sm text-gray-700">Has access to tax history</span>
+                <span className="text-sm text-gray-700">{t('financial.accountantFields.hasTaxHistoryAccess')}</span>
               </label>
-              <Input label="Years Serviced" value={accountantForm.formData.yearsServiced || ''} onChange={(e) => accountantForm.updateField('yearsServiced', e.target.value)} placeholder="e.g., 2020-2024" />
-              <Input label="Services Provided" value={accountantForm.formData.servicesProvided || ''} onChange={(e) => accountantForm.updateField('servicesProvided', e.target.value)} placeholder="Tax prep, bookkeeping, etc." />
-              <TextArea label="Notes" value={accountantForm.formData.notes || ''} onChange={(e) => accountantForm.updateField('notes', e.target.value)} rows={3} />
+              <Input label={t('financial.accountantFields.yearsServiced')} value={accountantForm.formData.yearsServiced || ''} onChange={(e) => accountantForm.updateField('yearsServiced', e.target.value)} placeholder={t('financial.accountantFields.yearsServicedPlaceholder')} />
+              <Input label={t('financial.fields.servicesProvided')} value={accountantForm.formData.servicesProvided || ''} onChange={(e) => accountantForm.updateField('servicesProvided', e.target.value)} placeholder={t('financial.fields.servicesProvidedPlaceholder')} />
+              <TextArea label={t('financial.fields.notes')} value={accountantForm.formData.notes || ''} onChange={(e) => accountantForm.updateField('notes', e.target.value)} rows={3} />
             </div>
           </Modal>
 
           <Modal
             isOpen={residualForm.isModalOpen}
             onClose={residualForm.closeModal}
-            title={residualForm.editingItem ? 'Edit Residual Income' : 'Add Residual Income'}
+            title={residualForm.editingItem ? t('financial.modals.editResidual') : t('financial.modals.addResidual')}
             footer={
               <>
-                <Button variant="secondary" onClick={residualForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveResidual} disabled={!residualForm.formData.sourceName?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={residualForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveResidual} disabled={!residualForm.formData.sourceName?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Source Name" value={residualForm.formData.sourceName || ''} onChange={(e) => residualForm.updateField('sourceName', e.target.value)} placeholder="e.g., Book Royalties, Stock Photos" required />
-              <Input label="Platform/Publisher" value={residualForm.formData.platformPublisher || ''} onChange={(e) => residualForm.updateField('platformPublisher', e.target.value)} placeholder="e.g., Amazon KDP, Getty Images" />
-              <Input label="Payment Frequency" value={residualForm.formData.paymentFrequency || ''} onChange={(e) => residualForm.updateField('paymentFrequency', e.target.value)} placeholder="e.g., Monthly, Quarterly" />
-              <Input label="Contact Information" value={residualForm.formData.contactInfo || ''} onChange={(e) => residualForm.updateField('contactInfo', e.target.value)} placeholder="Support email or phone" />
-              <TextArea label="Access Details" value={residualForm.formData.accessDetails || ''} onChange={(e) => residualForm.updateField('accessDetails', e.target.value)} placeholder="How to access the account and payment history" rows={3} />
-              <TextArea label="Notes" value={residualForm.formData.notes || ''} onChange={(e) => residualForm.updateField('notes', e.target.value)} rows={2} />
+              <Input label={t('financial.fields.sourceName')} value={residualForm.formData.sourceName || ''} onChange={(e) => residualForm.updateField('sourceName', e.target.value)} placeholder={t('financial.fields.sourceNamePlaceholder')} required />
+              <Input label={t('financial.fields.platformPublisher')} value={residualForm.formData.platformPublisher || ''} onChange={(e) => residualForm.updateField('platformPublisher', e.target.value)} placeholder={t('financial.fields.platformPublisherPlaceholder')} />
+              <Input label={t('financial.fields.paymentFrequency')} value={residualForm.formData.paymentFrequency || ''} onChange={(e) => residualForm.updateField('paymentFrequency', e.target.value)} placeholder={t('financial.fields.paymentFrequencyPlaceholder')} />
+              <Input label={t('financial.fields.contactInfo')} value={residualForm.formData.contactInfo || ''} onChange={(e) => residualForm.updateField('contactInfo', e.target.value)} />
+              <TextArea label={t('financial.fields.accessDetails')} value={residualForm.formData.accessDetails || ''} onChange={(e) => residualForm.updateField('accessDetails', e.target.value)} placeholder={t('financial.fields.accessDetailsPlaceholder')} rows={3} />
+              <TextArea label={t('financial.fields.notes')} value={residualForm.formData.notes || ''} onChange={(e) => residualForm.updateField('notes', e.target.value)} rows={2} />
             </div>
           </Modal>
 
           <Modal
             isOpen={cryptoForm.isModalOpen}
             onClose={cryptoForm.closeModal}
-            title={cryptoForm.editingItem ? 'Edit Cryptocurrency' : 'Add Cryptocurrency'}
+            title={cryptoForm.editingItem ? t('financial.modals.editCrypto') : t('financial.modals.addCrypto')}
             footer={
               <>
-                <Button variant="secondary" onClick={cryptoForm.closeModal}>Cancel</Button>
-                <Button onClick={handleSaveCrypto} disabled={!cryptoForm.formData.currencyType?.trim()}>Save</Button>
+                <Button variant="secondary" onClick={cryptoForm.closeModal}>{t('common.cancel')}</Button>
+                <Button onClick={handleSaveCrypto} disabled={!cryptoForm.formData.currencyType?.trim()}>{t('common.save')}</Button>
               </>
             }
           >
             <div className="space-y-4">
-              <Input label="Currency Type" value={cryptoForm.formData.currencyType || ''} onChange={(e) => cryptoForm.updateField('currencyType', e.target.value)} placeholder="e.g., Bitcoin, Ethereum" required />
-              <Input label="Exchange/Wallet Provider" value={cryptoForm.formData.exchangeWalletProvider || ''} onChange={(e) => cryptoForm.updateField('exchangeWalletProvider', e.target.value)} placeholder="e.g., Coinbase, Hardware Wallet" />
-              <TextArea label="Access Instructions" value={cryptoForm.formData.accessInstructions || ''} onChange={(e) => cryptoForm.updateField('accessInstructions', e.target.value)} placeholder="How to access the wallet or exchange account" rows={3} />
-              <Input label="Trusted Contact for Assistance" value={cryptoForm.formData.trustedContact || ''} onChange={(e) => cryptoForm.updateField('trustedContact', e.target.value)} placeholder="Someone familiar with crypto who can help" />
-              <TextArea label="Notes" value={cryptoForm.formData.notes || ''} onChange={(e) => cryptoForm.updateField('notes', e.target.value)} rows={2} />
+              <Input label={t('financial.fields.currencyType')} value={cryptoForm.formData.currencyType || ''} onChange={(e) => cryptoForm.updateField('currencyType', e.target.value)} placeholder={t('financial.fields.currencyTypePlaceholder')} required />
+              <Input label={t('financial.fields.exchangeWalletProvider')} value={cryptoForm.formData.exchangeWalletProvider || ''} onChange={(e) => cryptoForm.updateField('exchangeWalletProvider', e.target.value)} placeholder={t('financial.fields.exchangeWalletProviderPlaceholder')} />
+              <TextArea label={t('financial.fields.accessInstructions')} value={cryptoForm.formData.accessInstructions || ''} onChange={(e) => cryptoForm.updateField('accessInstructions', e.target.value)} placeholder={t('financial.fields.accessInstructionsPlaceholder')} rows={3} />
+              <Input label={t('financial.fields.trustedContact')} value={cryptoForm.formData.trustedContact || ''} onChange={(e) => cryptoForm.updateField('trustedContact', e.target.value)} placeholder={t('financial.fields.trustedContactPlaceholder')} />
+              <TextArea label={t('financial.fields.notes')} value={cryptoForm.formData.notes || ''} onChange={(e) => cryptoForm.updateField('notes', e.target.value)} rows={2} />
             </div>
           </Modal>
         </div>

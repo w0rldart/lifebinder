@@ -9,12 +9,14 @@ import { EmptyState } from '~/components/EmptyState';
 import { useSession } from '~/lib/session-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
+import { useLanguage } from '~/lib/language-context';
 import type { Note } from '~/types';
 import { Pin, Edit2, Trash2 } from 'lucide-react';
 
 export default function Notes() {
   const { plan } = useSession();
   const { updatePlan } = usePlanUpdater();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
 
   const noteForm = useModalForm<Partial<Note>>({
@@ -26,14 +28,14 @@ export default function Notes() {
   });
 
   const colorOptions = [
-    { value: '#ffffff', label: 'White', color: '#ffffff' },
-    { value: '#fef3c7', label: 'Yellow', color: '#fef3c7' },
-    { value: '#dbeafe', label: 'Blue', color: '#dbeafe' },
-    { value: '#fce7f3', label: 'Pink', color: '#fce7f3' },
-    { value: '#f3e8ff', label: 'Purple', color: '#f3e8ff' },
-    { value: '#e0e7ff', label: 'Indigo', color: '#e0e7ff' },
-    { value: '#d1fae5', label: 'Green', color: '#d1fae5' },
-    { value: '#fed7aa', label: 'Orange', color: '#fed7aa' },
+    { value: '#ffffff', label: t('notes.colors.white'), color: '#ffffff' },
+    { value: '#fef3c7', label: t('notes.colors.yellow'), color: '#fef3c7' },
+    { value: '#dbeafe', label: t('notes.colors.blue'), color: '#dbeafe' },
+    { value: '#fce7f3', label: t('notes.colors.pink'), color: '#fce7f3' },
+    { value: '#f3e8ff', label: t('notes.colors.purple'), color: '#f3e8ff' },
+    { value: '#e0e7ff', label: t('notes.colors.indigo'), color: '#e0e7ff' },
+    { value: '#d1fae5', label: t('notes.colors.green'), color: '#d1fae5' },
+    { value: '#fed7aa', label: t('notes.colors.orange'), color: '#fed7aa' },
   ];
 
   const handleSaveNote = async () => {
@@ -55,21 +57,21 @@ export default function Notes() {
       ? plan.notes.map((n) => (n.id === noteForm.editingItem!.id ? note : n))
       : [...plan.notes, note];
 
-    await updatePlan({ ...plan, notes: updated }, noteForm.editingItem ? 'Note updated' : 'Note added');
+    await updatePlan({ ...plan, notes: updated }, noteForm.editingItem ? t('notes.noteUpdated') : t('notes.noteAdded'));
     noteForm.closeModal();
   };
 
   const handleDeleteNote = async (id: string) => {
     if (!plan) return;
-    if (!confirm('Are you sure you want to delete this note? This action cannot be undone.')) return;
+    if (!confirm(t('notes.deleteConfirm'))) return;
     const updated = plan.notes.filter((n) => n.id !== id);
-    await updatePlan({ ...plan, notes: updated }, 'Note deleted');
+    await updatePlan({ ...plan, notes: updated }, t('notes.noteDeleted'));
   };
 
   const handleTogglePin = async (note: Note) => {
     if (!plan) return;
     const updated = plan.notes.map((n) => (n.id === note.id ? { ...n, isPinned: !n.isPinned } : n));
-    await updatePlan({ ...plan, notes: updated }, note.isPinned ? 'Note unpinned' : 'Note pinned');
+    await updatePlan({ ...plan, notes: updated }, note.isPinned ? t('notes.noteUnpinned') : t('notes.notePinned'));
   };
 
   const filteredNotes = plan?.notes.filter((note) => {
@@ -92,9 +94,9 @@ export default function Notes() {
     const diffInMs = now.getTime() - date.getTime();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays === 0) return t('notes.dateFormat.today');
+    if (diffInDays === 1) return t('notes.dateFormat.yesterday');
+    if (diffInDays < 7) return t('notes.dateFormat.daysAgo', { count: diffInDays });
     return date.toLocaleDateString();
   };
 
@@ -104,10 +106,10 @@ export default function Notes() {
         <div className="space-y-4 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Notes</h1>
-              <p className="text-sm sm:text-base text-gray-600">Quick notes, reminders, and miscellaneous information</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">{t('notes.title')}</h1>
+              <p className="text-sm sm:text-base text-gray-600">{t('notes.description')}</p>
             </div>
-            <Button onClick={() => noteForm.openModal()} className="sm:flex-shrink-0">Add Note</Button>
+            <Button onClick={() => noteForm.openModal()} className="sm:flex-shrink-0">{t('notes.addNote')}</Button>
           </div>
 
           <div className="bg-white rounded-lg shadow p-4">
@@ -115,19 +117,19 @@ export default function Notes() {
               label=""
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes by title, content, or category..."
+              placeholder={t('notes.searchPlaceholder')}
             />
           </div>
 
           {sortedNotes.length === 0 ? (
             <EmptyState
-              title={searchQuery ? 'No matching notes' : 'No notes yet'}
+              title={searchQuery ? t('notes.noMatchingNotes') : t('notes.noNotesYet')}
               description={
                 searchQuery
-                  ? 'Try a different search term'
-                  : 'Create your first note to store quick information, reminders, or miscellaneous details'
+                  ? t('notes.tryDifferentSearch')
+                  : t('notes.noNotesDescription')
               }
-              actionLabel="Add Note"
+              actionLabel={t('notes.addNote')}
               onAction={() => noteForm.openModal()}
             />
           ) : (
@@ -151,7 +153,7 @@ export default function Notes() {
                       <button
                         onClick={() => handleTogglePin(note)}
                         className={`ml-2 p-1 rounded hover:bg-gray-200 transition-colors ${note.isPinned ? 'text-yellow-600' : 'text-gray-400'}`}
-                        title={note.isPinned ? 'Unpin note' : 'Pin note'}
+                        title={note.isPinned ? t('notes.unpinNote') : t('notes.pinNote')}
                       >
                         <Pin className="w-5 h-5" />
                       </button>
@@ -169,14 +171,14 @@ export default function Notes() {
                         <button
                           onClick={() => noteForm.openModal(note)}
                           className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                          title="Edit note"
+                          title={t('notes.editNoteTitle')}
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteNote(note.id)}
                           className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
-                          title="Delete note"
+                          title={t('notes.deleteNoteTitle')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -191,44 +193,44 @@ export default function Notes() {
           <Modal
             isOpen={noteForm.isModalOpen}
             onClose={noteForm.closeModal}
-            title={noteForm.editingItem ? 'Edit Note' : 'Add Note'}
+            title={noteForm.editingItem ? t('notes.editNote') : t('notes.addNote')}
             footer={
               <>
                 <Button variant="secondary" onClick={noteForm.closeModal}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button onClick={handleSaveNote} disabled={!noteForm.formData.title?.trim()}>
-                  Save
+                  {t('common.save')}
                 </Button>
               </>
             }
           >
             <div className="space-y-4">
               <Input
-                label="Title"
+                label={t('notes.noteTitle')}
                 value={noteForm.formData.title || ''}
                 onChange={(e) => noteForm.updateField('title', e.target.value)}
-                placeholder="Note title"
+                placeholder={t('notes.noteTitlePlaceholder')}
                 required
               />
 
               <Input
-                label="Category"
+                label={t('notes.category')}
                 value={noteForm.formData.category || ''}
                 onChange={(e) => noteForm.updateField('category', e.target.value)}
-                placeholder="e.g., Home, Work, Personal (optional)"
+                placeholder={t('notes.categoryPlaceholder')}
               />
 
               <TextArea
-                label="Content"
+                label={t('notes.content')}
                 value={noteForm.formData.content || ''}
                 onChange={(e) => noteForm.updateField('content', e.target.value)}
-                placeholder="Write your note here..."
+                placeholder={t('notes.contentPlaceholder')}
                 rows={8}
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Card Color</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('notes.cardColor')}</label>
                 <div className="flex gap-2 flex-wrap">
                   {colorOptions.map((option) => (
                     <button
@@ -252,7 +254,7 @@ export default function Notes() {
                   onChange={(e) => noteForm.updateField('isPinned', e.target.checked)}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-700">Pin this note to the top</span>
+                <span className="text-sm font-medium text-gray-700">{t('notes.pinToTop')}</span>
               </label>
             </div>
           </Modal>

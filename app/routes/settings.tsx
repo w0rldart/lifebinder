@@ -7,6 +7,7 @@ import { Input } from '~/components/Input';
 import { Modal } from '~/components/Modal';
 import { useSession } from '~/lib/session-context';
 import { useToast } from '~/lib/toast-context';
+import { useLanguage } from '~/lib/language-context';
 import { calculatePassphraseStrength } from '~/lib/crypto';
 import { CheckCircle2, AlertTriangle, XCircle, Github, Heart } from 'lucide-react';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
@@ -15,6 +16,7 @@ export default function Settings() {
   const { plan, isEncrypted, addEncryption, resetPlan } = useSession();
   const { updatePlan } = usePlanUpdater();
   const { showToast } = useToast();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
 
   const [showEncryptionModal, setShowEncryptionModal] = useState(false);
@@ -30,12 +32,12 @@ export default function Settings() {
 
   const handleAddEncryption = async () => {
     if (passphrase !== confirmPassphrase) {
-      setError('Passphrases do not match');
+      setError(t('settings.passphraseMismatch'));
       return;
     }
 
     if (passphrase.length < 8) {
-      setError('Passphrase must be at least 8 characters');
+      setError(t('settings.passphraseMinLength'));
       return;
     }
 
@@ -47,9 +49,9 @@ export default function Settings() {
       setShowEncryptionModal(false);
       setPassphrase('');
       setConfirmPassphrase('');
-      showToast('Encryption enabled successfully', 'success');
+      showToast(t('settings.encryptionSuccess'), 'success');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add encryption');
+      setError(err instanceof Error ? err.message : t('settings.encryptionError'));
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ export default function Settings() {
       setShowDeleteModal(false);
       navigate('/');
     } catch (err) {
-      showToast('Failed to delete plan', 'error');
+      showToast(t('settings.deleteFailure'), 'error');
     }
   };
 
@@ -80,21 +82,21 @@ export default function Settings() {
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">Manage your Life Binder preferences and security</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">{t('settings.description')}</p>
         </div>
 
         <Card>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Encryption</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('settings.encryption')}</h2>
           <div className="space-y-4">
             {isEncrypted ? (
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold text-green-900">Encryption Enabled</p>
+                    <p className="font-semibold text-green-900">{t('settings.encryptionEnabled')}</p>
                     <p className="text-sm text-green-800 mt-1">
-                      Your data is encrypted and protected with a passphrase. Your data is secured with client-side encryption.
+                      {t('settings.encryptionEnabledDesc')}
                     </p>
                   </div>
                 </div>
@@ -105,15 +107,15 @@ export default function Settings() {
                   <div className="flex items-start gap-3">
                     <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="font-semibold text-yellow-900">Encryption Disabled</p>
+                      <p className="font-semibold text-yellow-900">{t('settings.encryptionDisabled')}</p>
                       <p className="text-sm text-yellow-800 mt-1">
-                        Your data is currently stored without encryption. Enable encryption to secure your sensitive information.
+                        {t('settings.encryptionDisabledDesc')}
                       </p>
                     </div>
                   </div>
                 </div>
                 <Button onClick={() => setShowEncryptionModal(true)} className="bg-green-600 hover:bg-green-700">
-                  Enable Encryption
+                  {t('settings.enableEncryption')}
                 </Button>
               </div>
             )}
@@ -121,13 +123,64 @@ export default function Settings() {
         </Card>
 
         <Card>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Preferences</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('settings.preferences')}</h2>
           <div className="space-y-4">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="mb-3">
+                <p className="font-medium text-gray-900">{t('settings.language')}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {t('settings.languageDescription')}
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+                    language === 'en'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => setLanguage('es')}
+                  className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+                    language === 'es'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  Español
+                </button>
+                <button
+                  onClick={() => setLanguage('de')}
+                  className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+                    language === 'de'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  Deutsch
+                </button>
+                <button
+                  onClick={() => setLanguage('fr')}
+                  className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+                    language === 'fr'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  Français
+                </button>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div>
-                <p className="font-medium text-gray-900">Show Encryption Warning</p>
+                <p className="font-medium text-gray-900">{t('settings.showEncryptionWarning')}</p>
                 <p className="text-sm text-gray-600 mt-1">
-                  Display a warning banner when encryption is disabled
+                  {t('settings.showEncryptionWarningDesc')}
                 </p>
               </div>
               <button
@@ -147,10 +200,10 @@ export default function Settings() {
         </Card>
 
         <Card>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">About & Support</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('settings.aboutSupport')}</h2>
           <div className="space-y-4">
             <p className="text-gray-700">
-              Life Binder is an open-source project. Check out the code, contribute, or show your support!
+              {t('settings.aboutDescription')}
             </p>
 
             <div className="space-y-3">
@@ -162,8 +215,8 @@ export default function Settings() {
               >
                 <Github className="w-6 h-6 text-gray-700" />
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">View on GitHub</p>
-                  <p className="text-sm text-gray-600">Star the repo, report issues, or contribute</p>
+                  <p className="font-medium text-gray-900">{t('settings.viewOnGitHub')}</p>
+                  <p className="text-sm text-gray-600">{t('settings.viewOnGitHubDesc')}</p>
                 </div>
               </a>
 
@@ -175,8 +228,8 @@ export default function Settings() {
               >
                 <Heart className="w-6 h-6 text-pink-700" />
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Sponsor on GitHub</p>
-                  <p className="text-sm text-gray-600">Help me continue the development</p>
+                  <p className="font-medium text-gray-900">{t('settings.sponsorOnGitHub')}</p>
+                  <p className="text-sm text-gray-600">{t('settings.sponsorOnGitHubDesc')}</p>
                 </div>
               </a>
             </div>
@@ -185,15 +238,15 @@ export default function Settings() {
 
         <Card>
           <div className="border-2 border-red-200 rounded-lg p-6 bg-red-50">
-            <h3 className="font-semibold text-red-900 mb-2">Danger Zone</h3>
+            <h3 className="font-semibold text-red-900 mb-2">{t('settings.dangerZone')}</h3>
             <p className="text-sm text-red-800 mb-4">
-              Permanently delete this plan and all its data. This action cannot be undone. Make sure to export your data first if you need to keep it.
+              {t('settings.dangerZoneDesc')}
             </p>
             <Button
               onClick={() => setShowDeleteModal(true)}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
-              Delete Plan
+              {t('settings.deletePlan')}
             </Button>
           </div>
         </Card>
@@ -207,7 +260,7 @@ export default function Settings() {
           setConfirmPassphrase('');
           setError('');
         }}
-        title="Enable Encryption"
+        title={t('settings.enableEncryptionTitle')}
         footer={
           <>
             <Button
@@ -219,17 +272,17 @@ export default function Settings() {
                 setError('');
               }}
             >
-              Cancel
+              {t('settings.cancel')}
             </Button>
             <Button onClick={handleAddEncryption} disabled={loading}>
-              {loading ? 'Enabling...' : 'Enable Encryption'}
+              {loading ? t('common.loading') : t('settings.enableEncryption')}
             </Button>
           </>
         }
       >
         <div className="space-y-4">
           <p className="text-gray-700">
-            Add a passphrase to encrypt your data. You will need this passphrase to access your plan in the future.
+            {t('settings.createPassphrase')}
           </p>
 
           {error && (
@@ -239,23 +292,26 @@ export default function Settings() {
           )}
 
           <Input
-            label="Passphrase"
+            label={t('settings.enterPassphrase')}
             type="password"
             value={passphrase}
             onChange={e => setPassphrase(e.target.value)}
-            placeholder="Enter a strong passphrase"
+            placeholder={t('settings.passphraseHint')}
           />
 
           {strength && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Strength:</span>
+                <span className="text-gray-600">{t('settings.passphraseStrength')}</span>
                 <span className={`font-medium ${
                   strength.score >= 4 ? 'text-green-600' :
                   strength.score >= 3 ? 'text-yellow-600' :
                   'text-red-600'
                 }`}>
-                  {strength.label}
+                  {strength.score >= 4 ? t('settings.strengthVeryStrong') :
+                   strength.score >= 3 ? t('settings.strengthStrong') :
+                   strength.score >= 2 ? t('settings.strengthMedium') :
+                   t('settings.strengthWeak')}
                 </span>
               </div>
               <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -272,16 +328,16 @@ export default function Settings() {
           )}
 
           <Input
-            label="Confirm Passphrase"
+            label={t('settings.confirmPassphrase')}
             type="password"
             value={confirmPassphrase}
             onChange={e => setConfirmPassphrase(e.target.value)}
-            placeholder="Re-enter your passphrase"
+            placeholder={t('settings.passphraseHint')}
           />
 
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800 font-medium">
-              Important: If you forget your passphrase, your data cannot be recovered. Store it securely.
+              {t('settings.passphraseWarning')}
             </p>
           </div>
         </div>
@@ -290,14 +346,14 @@ export default function Settings() {
       <Modal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Plan - Confirm"
+        title={t('settings.deletePlanTitle')}
         footer={
           <>
             <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-              Cancel
+              {t('settings.cancel')}
             </Button>
             <Button onClick={handleDeletePlan} className="bg-red-600 hover:bg-red-700 text-white">
-              Yes, Delete Everything
+              {t('settings.deletePlanButton')}
             </Button>
           </>
         }
@@ -307,9 +363,9 @@ export default function Settings() {
             <div className="flex gap-3">
               <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-red-900">Warning: This action is permanent!</p>
+                <p className="font-semibold text-red-900">{t('common.warning')}</p>
                 <p className="text-sm text-red-800 mt-1">
-                  You are about to delete ALL data from this plan, including:
+                  {t('settings.deletePlanConfirm')}
                 </p>
               </div>
             </div>
@@ -319,34 +375,34 @@ export default function Settings() {
             <ul className="space-y-1 text-sm text-gray-700">
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>All contacts and notification plans</span>
+                <span>{t('settings.deleteItems.allContactsNotifications')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>Access information and devices</span>
+                <span>{t('settings.deleteItems.accessDevices')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>All accounts and subscriptions</span>
+                <span>{t('settings.deleteItems.accountsSubscriptions')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>Document locations and information</span>
+                <span>{t('settings.deleteItems.documentLocations')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>Estate planning details</span>
+                <span>{t('settings.deleteItems.estatePlanning')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>Emergency information and plans</span>
+                <span>{t('settings.deleteItems.emergencyInfo')}</span>
               </li>
             </ul>
           </div>
 
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800 font-medium">
-              This action cannot be undone. Make sure you have exported your data if you need to keep it.
+              {t('settings.deleteFinalWarning')}
             </p>
           </div>
         </div>

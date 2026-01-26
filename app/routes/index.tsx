@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { Button } from '~/components/Button';
 import { Input } from '~/components/Input';
 import { calculatePassphraseStrength } from '~/lib/crypto';
+import { useLanguage } from '~/lib/language-context';
 
 export default function Index() {
   const { isLocked, isFirstRun, isEncrypted, unlock, createNewPlan, createDemoPlan, error, clearError } = useSession();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [passphrase, setPassphrase] = useState('');
   const [confirmPassphrase, setConfirmPassphrase] = useState('');
@@ -44,18 +46,18 @@ export default function Index() {
 
     if (!skipEncryption && passphrase) {
       if (passphrase !== confirmPassphrase) {
-        setLocalError('Passphrases do not match');
+        setLocalError(t('welcome.errorPassphraseMismatch'));
         return;
       }
 
       if (passphrase.length < 8) {
-        setLocalError('Passphrase must be at least 8 characters');
+        setLocalError(t('welcome.errorPassphraseTooShort'));
         return;
       }
     }
 
     if (skipEncryption && passphrase) {
-      setLocalError('Cannot set passphrase when skipping encryption. Clear passphrase or uncheck "Skip encryption".');
+      setLocalError(t('welcome.errorPassphraseWithSkipEncryption'));
       return;
     }
 
@@ -79,12 +81,12 @@ export default function Index() {
     clearError();
 
     if (!skipEncryption && passphrase && passphrase.length < 8) {
-      setLocalError('Passphrase must be at least 8 characters for demo data');
+      setLocalError(t('welcome.errorDemoPassphraseTooShort'));
       return;
     }
 
     if (skipEncryption && passphrase) {
-      setLocalError('Cannot set passphrase when skipping encryption. Clear passphrase or uncheck "Skip encryption".');
+      setLocalError(t('welcome.errorPassphraseWithSkipEncryption'));
       return;
     }
 
@@ -101,7 +103,7 @@ export default function Index() {
   if (isFirstRun === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     );
   }
@@ -118,7 +120,7 @@ export default function Index() {
             className="w-64 mx-auto mb-4"
           />
           <p className="text-gray-600">
-            {isFirstRun ? 'Create your secure life runbook' : 'Welcome back'}
+            {isFirstRun ? t('welcome.tagline') : t('welcome.welcomeBack')}
           </p>
         </div>
 
@@ -127,19 +129,19 @@ export default function Index() {
             <form onSubmit={handleSetup} className="space-y-6">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Create Your Binder
+                  {t('welcome.createTitle')}
                 </h2>
                 <p className="text-sm text-gray-600 mb-6">
-                  Your data will be stored locally in your browser.
+                  {t('welcome.createDescription')}
                 </p>
               </div>
 
               <Input
-                label="Binder Title"
+                label={t('welcome.binderTitle')}
                 type="text"
                 value={planTitle}
                 onChange={(e) => setPlanTitle(e.target.value)}
-                placeholder="My Life Binder"
+                placeholder={t('welcome.binderTitlePlaceholder')}
                 required
               />
 
@@ -159,19 +161,18 @@ export default function Index() {
                     className="mt-1"
                   />
                   <label htmlFor="skipEncryption" className="text-sm text-gray-700 cursor-pointer flex-1">
-                    <span className="font-medium">Skip encryption (not recommended)</span>
+                    <span className="font-medium">{t('welcome.skipEncryptionLabel')}</span>
                     <p className="text-xs text-gray-600 mt-1">
-                      Your data will be stored in plaintext. You can add encryption later.
+                      {t('welcome.skipEncryptionDescription')}
                     </p>
                   </label>
                 </div>
 
                 {skipEncryption && (
                   <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                    <p className="font-medium mb-1">Warning: No Encryption</p>
+                    <p className="font-medium mb-1">{t('welcome.warningNoEncryptionTitle')}</p>
                     <p>
-                      Your data will be stored without encryption. Anyone with access to your browser storage can read it.
-                      It is strongly recommended to add encryption from the settings after setup.
+                      {t('welcome.warningNoEncryptionDescription')}
                     </p>
                   </div>
                 )}
@@ -181,11 +182,11 @@ export default function Index() {
                 <>
                   <div>
                     <Input
-                      label="Passphrase (Recommended)"
+                      label={t('welcome.passphraseLabel')}
                       type="password"
                       value={passphrase}
                       onChange={(e) => setPassphrase(e.target.value)}
-                      placeholder="Enter a strong passphrase"
+                      placeholder={t('welcome.passphrasePlaceholder')}
                     />
                     {strength && (
                       <div className="mt-2">
@@ -219,11 +220,11 @@ export default function Index() {
 
                   {passphrase && (
                     <Input
-                      label="Confirm Passphrase"
+                      label={t('welcome.confirmPassphrase')}
                       type="password"
                       value={confirmPassphrase}
                       onChange={(e) => setConfirmPassphrase(e.target.value)}
-                      placeholder="Re-enter your passphrase"
+                      placeholder={t('welcome.confirmPassphrasePlaceholder')}
                     />
                   )}
                 </>
@@ -238,9 +239,9 @@ export default function Index() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loading}
+                disabled={loading || (!skipEncryption && !passphrase)}
               >
-                {loading ? 'Creating...' : 'Create Binder'}
+                {loading ? t('welcome.creating') : t('welcome.createButton')}
               </Button>
 
               <div className="relative">
@@ -256,50 +257,49 @@ export default function Index() {
                 <Button
                   type="button"
                   onClick={handleLoadDemo}
-                  className="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-gray-300"
+                  className="w-full bg-gray-100 !text-black hover:bg-gray-200 border-2 border-gray-300"
                   disabled={loading}
                 >
-                  Load Demo Data
+                  {t('welcome.loadDemoData')}
                 </Button>
 
                 {showDemoConfirm && (
                   <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                    <p className="font-medium mb-1">Confirm Demo Data</p>
+                    <p className="font-medium mb-1">{t('welcome.confirmDemoTitle')}</p>
                     <p className="mb-2">
-                      This will create a binder pre-filled with example data for testing.
-                      You can edit or delete this data later.
+                      {t('welcome.confirmDemoDescription')}
                     </p>
                     <p className="text-xs">
-                      Make sure you've entered a passphrase above, then click "Load Demo Data" again to confirm.
+                      {t('welcome.confirmDemoHint')}
                     </p>
                   </div>
                 )}
               </div>
 
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                <strong>Important:</strong> Your passphrase cannot be recovered if lost. Store it securely.
+                <strong>{t('welcome.importantNote')}</strong> {t('welcome.importantNoteText')}
               </div>
             </form>
           ) : (
             <form onSubmit={handleUnlock} className="space-y-6">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  Unlock Your Binder
+                  {t('welcome.unlockTitle')}
                 </h2>
                 <p className="text-sm text-gray-600">
                   {isEncrypted
-                    ? 'Enter your passphrase to access your encrypted data.'
-                    : 'Your binder is not encrypted. Click unlock to access your data.'}
+                    ? t('welcome.unlockDescription')
+                    : t('welcome.unlockDescriptionNoEncryption')}
                 </p>
               </div>
 
               {isEncrypted && (
                 <Input
-                  label="Passphrase"
+                  label={t('welcome.passphrase')}
                   type="password"
                   value={passphrase}
                   onChange={(e) => setPassphrase(e.target.value)}
-                  placeholder="Enter your passphrase"
+                  placeholder={t('welcome.passphrasePlaceholder')}
                   autoFocus
                   required
                 />
@@ -307,9 +307,9 @@ export default function Index() {
 
               {!isEncrypted && (
                 <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                  <p className="font-medium mb-1">Warning: No Encryption</p>
+                  <p className="font-medium mb-1">{t('welcome.warningUnlockNoEncryption')}</p>
                   <p>
-                    Your data is not encrypted. Consider adding encryption from the settings after unlocking.
+                    {t('welcome.warningUnlockNoEncryptionDescription')}
                   </p>
                 </div>
               )}
@@ -325,7 +325,7 @@ export default function Index() {
                 className="w-full"
                 disabled={loading}
               >
-                {loading ? 'Unlocking...' : 'Unlock'}
+                {loading ? t('welcome.unlocking') : t('welcome.unlockButton')}
               </Button>
             </form>
           )}
@@ -333,10 +333,10 @@ export default function Index() {
 
         <div className="mt-8 text-center text-sm text-gray-600">
           <p>
-            Your data is encrypted and stored locally in your browser.
+            {t('welcome.localStorageNote')}
           </p>
           <p className="mt-1">
-            No data is sent to any server.
+            {t('welcome.noServerNote')}
           </p>
         </div>
       </div>

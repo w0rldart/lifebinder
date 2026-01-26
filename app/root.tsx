@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { SessionProvider } from "./lib/session-context";
 import { ToastProvider } from "./lib/toast-context";
+import { LanguageProvider } from "./lib/language-context";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -52,11 +53,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <SessionProvider>
-      <ToastProvider>
-        <Outlet />
-      </ToastProvider>
-    </SessionProvider>
+    <LanguageProvider>
+      <SessionProvider>
+        <ToastProvider>
+          <Outlet />
+        </ToastProvider>
+      </SessionProvider>
+    </LanguageProvider>
   );
 }
 

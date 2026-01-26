@@ -7,6 +7,7 @@ import { TextArea } from '~/components/TextArea';
 import { Select } from '~/components/Select';
 import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
 import type { Document, LocationType, SensitivityLevel } from '~/types';
@@ -14,6 +15,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 
 export default function Documents() {
   const { plan } = useSession();
+  const { t } = useLanguage();
   const { updatePlan } = usePlanUpdater();
 
   const documentForm = useModalForm<Partial<Document>>({
@@ -33,27 +35,27 @@ export default function Documents() {
       : [...plan.documents, { ...documentForm.formData, id: crypto.randomUUID() } as Document];
 
     const updatedPlan = { ...plan, documents: updatedDocs };
-    await updatePlan(updatedPlan, documentForm.editingItem ? 'Document updated successfully' : 'Document added successfully');
+    await updatePlan(updatedPlan, documentForm.editingItem ? t('documents.documentUpdated') : t('documents.documentAdded'));
     documentForm.closeModal();
   };
 
   const handleDelete = async (id: string) => {
-    if (!plan || !confirm('Delete this document entry?')) return;
+    if (!plan || !confirm(t('documents.deleteDocument'))) return;
 
     const updatedDocs = plan.documents.filter(d => d.id !== id);
     const updatedPlan = { ...plan, documents: updatedDocs };
-    await updatePlan(updatedPlan, 'Document deleted successfully');
+    await updatePlan(updatedPlan, t('documents.documentDeleted'));
   };
 
   const locationOptions = [
-    { value: 'physical', label: 'Physical' },
-    { value: 'digital', label: 'Digital' },
-    { value: 'both', label: 'Both' },
+    { value: 'physical', label: t('documents.fields.locationTypePhysical') },
+    { value: 'digital', label: t('documents.fields.locationTypeDigital') },
+    { value: 'both', label: t('documents.fields.locationTypeBoth') },
   ];
 
   const sensitivityOptions = [
-    { value: 'normal', label: 'Normal' },
-    { value: 'high', label: 'High Sensitivity' },
+    { value: 'normal', label: t('documents.fields.sensitivityNormal') },
+    { value: 'high', label: t('documents.fields.sensitivityHigh') },
   ];
 
   return (
@@ -65,25 +67,25 @@ export default function Documents() {
         return (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Documents</h1>
-          <p className="text-sm sm:text-base text-gray-600">Track important document locations</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('documents.title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{t('documents.description')}</p>
         </div>
 
         <WarningBanner type="warning">
-          <strong>Security Reminder:</strong> Avoid storing actual passwords or safe combinations here. Just note the location of documents. High sensitivity documents are excluded from PDF exports by default.
+          <strong>{t('documents.securityReminder')}</strong> {t('documents.securityReminderText')}
         </WarningBanner>
 
-        <Card title="Documents" action={<Button onClick={() => documentForm.openModal()}>Add Document</Button>}>
+        <Card title={t('documents.title')} action={<Button onClick={() => documentForm.openModal()}>{t('documents.addDocument')}</Button>}>
           {plan.documents.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No documents added yet</p>
-              <Button onClick={() => documentForm.openModal()}>Add Your First Document</Button>
+              <p className="text-gray-500 mb-4">{t('documents.noDocumentsYet')}</p>
+              <Button onClick={() => documentForm.openModal()}>{t('documents.addFirstDocument')}</Button>
             </div>
           ) : (
             <div className="space-y-6">
               {normalDocs.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Normal Documents</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('documents.normalDocuments')}</h3>
                   <div className="space-y-3">
                     {normalDocs.map(doc => (
                       <div key={doc.id} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
@@ -117,9 +119,9 @@ export default function Documents() {
 
               {highSensitivityDocs.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">High Sensitivity Documents</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('documents.highSensitivityDocuments')}</h3>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3 text-sm text-yellow-800">
-                    <strong>Note:</strong> These documents will be excluded from PDF exports by default
+                    <strong>{t('documents.highSensitivityNote')}</strong> {t('documents.highSensitivityNoteText')}
                   </div>
                   <div className="space-y-3">
                     {highSensitivityDocs.map(doc => (
@@ -127,7 +129,7 @@ export default function Documents() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <div className="font-medium text-gray-900">{doc.title}</div>
-                            <span className="text-xs bg-red-600 text-white px-2 py-1 rounded">High Sensitivity</span>
+                            <span className="text-xs bg-red-600 text-white px-2 py-1 rounded">{t('documents.highSensitivity')}</span>
                           </div>
                           <div className="text-sm text-gray-600 mt-1">
                             <span className="inline-flex items-center gap-1">
@@ -161,61 +163,61 @@ export default function Documents() {
         <Modal
           isOpen={documentForm.isModalOpen}
           onClose={documentForm.closeModal}
-          title={documentForm.editingItem ? 'Edit Document' : 'Add Document'}
+          title={documentForm.editingItem ? t('documents.editDocument') : t('documents.addDocument')}
           footer={
             <>
-              <Button variant="secondary" onClick={documentForm.closeModal}>Cancel</Button>
-              <Button onClick={handleSave} disabled={!documentForm.formData.title?.trim()}>Save</Button>
+              <Button variant="secondary" onClick={documentForm.closeModal}>{t('common.cancel')}</Button>
+              <Button onClick={handleSave} disabled={!documentForm.formData.title?.trim()}>{t('common.save')}</Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Document Title"
+              label={t('documents.fields.documentTitle')}
               value={documentForm.formData.title || ''}
               onChange={(e) => documentForm.updateField('title', e.target.value)}
-              placeholder="e.g., Will, Birth Certificate, Property Deed"
+              placeholder={t('documents.fields.documentTitlePlaceholder')}
               required
             />
 
             <Select
-              label="Location Type"
+              label={t('documents.fields.locationType')}
               value={documentForm.formData.locationType || 'physical'}
               onChange={(e) => documentForm.updateField('locationType', e.target.value as LocationType)}
               options={locationOptions}
             />
 
             <Input
-              label="Location"
+              label={t('documents.fields.location')}
               value={documentForm.formData.location || ''}
               onChange={(e) => documentForm.updateField('location', e.target.value)}
-              placeholder="e.g., Safe in bedroom closet, Google Drive folder"
+              placeholder={t('documents.fields.locationPlaceholder')}
             />
 
             <TextArea
-              label="Details"
+              label={t('documents.fields.details')}
               value={documentForm.formData.details || ''}
               onChange={(e) => documentForm.updateField('details', e.target.value)}
-              placeholder="Additional location details or instructions..."
+              placeholder={t('documents.fields.detailsPlaceholder')}
             />
 
             <TextArea
-              label="Notes"
+              label={t('documents.fields.notes')}
               value={documentForm.formData.notes || ''}
               onChange={(e) => documentForm.updateField('notes', e.target.value)}
-              placeholder="Any other important information..."
+              placeholder={t('documents.fields.notesPlaceholder')}
             />
 
             <div>
               <Select
-                label="Sensitivity Level"
+                label={t('documents.fields.sensitivityLevel')}
                 value={documentForm.formData.sensitivity || 'normal'}
                 onChange={(e) => documentForm.updateField('sensitivity', e.target.value as SensitivityLevel)}
                 options={sensitivityOptions}
               />
               {documentForm.formData.sensitivity === 'high' && (
                 <div className="mt-2 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
-                  This document will be excluded from PDF exports by default
+                  {t('documents.excludedFromExport')}
                 </div>
               )}
             </div>

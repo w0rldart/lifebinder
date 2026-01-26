@@ -6,6 +6,7 @@ import { Input } from '~/components/Input';
 import { TextArea } from '~/components/TextArea';
 import { Select } from '~/components/Select';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
 import type { Subscription, CloudService, Domain, HostingAccount, AccountStatus, SocialMediaAccount, SocialMediaDisposition } from '~/types';
@@ -13,6 +14,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 
 export default function Accounts() {
   const { plan } = useSession();
+  const { t } = useLanguage();
   const { updatePlan } = usePlanUpdater();
 
   const subForm = useModalForm<Partial<Subscription>>({ name: '', type: '', status: 'review', notes: '', autoPayEnabled: false, contractEndDate: '', cancellationNoticeDays: 0, paymentMethod: '' });
@@ -29,7 +31,7 @@ export default function Accounts() {
       : [...plan.accounts.subscriptions, { ...subForm.formData, id: crypto.randomUUID() } as Subscription];
 
     const updatedPlan = { ...plan, accounts: { ...plan.accounts, subscriptions: updated } };
-    await updatePlan(updatedPlan, subForm.editingItem ? 'Subscription updated' : 'Subscription added');
+    await updatePlan(updatedPlan, subForm.editingItem ? t('accounts.subscriptionUpdated') : t('accounts.subscriptionAdded'));
     subForm.closeModal();
   };
 
@@ -41,7 +43,7 @@ export default function Accounts() {
       : [...plan.accounts.cloudServices, { ...cloudForm.formData, id: crypto.randomUUID() } as CloudService];
 
     const updatedPlan = { ...plan, accounts: { ...plan.accounts, cloudServices: updated } };
-    await updatePlan(updatedPlan, cloudForm.editingItem ? 'Cloud service updated' : 'Cloud service added');
+    await updatePlan(updatedPlan, cloudForm.editingItem ? t('accounts.cloudServiceUpdated') : t('accounts.cloudServiceAdded'));
     cloudForm.closeModal();
   };
 
@@ -53,7 +55,7 @@ export default function Accounts() {
       : [...plan.accounts.domains, { ...domainForm.formData, id: crypto.randomUUID() } as Domain];
 
     const updatedPlan = { ...plan, accounts: { ...plan.accounts, domains: updated } };
-    await updatePlan(updatedPlan, domainForm.editingItem ? 'Domain updated' : 'Domain added');
+    await updatePlan(updatedPlan, domainForm.editingItem ? t('accounts.domainUpdated') : t('accounts.domainAdded'));
     domainForm.closeModal();
   };
 
@@ -65,7 +67,7 @@ export default function Accounts() {
       : [...plan.accounts.hosting, { ...hostingForm.formData, id: crypto.randomUUID() } as HostingAccount];
 
     const updatedPlan = { ...plan, accounts: { ...plan.accounts, hosting: updated } };
-    await updatePlan(updatedPlan, hostingForm.editingItem ? 'Hosting updated' : 'Hosting added');
+    await updatePlan(updatedPlan, hostingForm.editingItem ? t('accounts.hostingUpdated') : t('accounts.hostingAdded'));
     hostingForm.closeModal();
   };
 
@@ -77,12 +79,12 @@ export default function Accounts() {
       : [...plan.accounts.socialMedia, { ...socialForm.formData, id: crypto.randomUUID() } as SocialMediaAccount];
 
     const updatedPlan = { ...plan, accounts: { ...plan.accounts, socialMedia: updated } };
-    await updatePlan(updatedPlan, socialForm.editingItem ? 'Social media account updated' : 'Social media account added');
+    await updatePlan(updatedPlan, socialForm.editingItem ? t('accounts.socialMediaUpdated') : t('accounts.socialMediaAdded'));
     socialForm.closeModal();
   };
 
   const handleDelete = async (type: 'subscription' | 'cloud' | 'domain' | 'hosting' | 'social', id: string) => {
-    if (!plan || !confirm('Delete this item?')) return;
+    if (!plan || !confirm(t('accounts.deleteItem'))) return;
 
     const updates: any = { ...plan.accounts };
     if (type === 'subscription') updates.subscriptions = plan.accounts.subscriptions.filter(s => s.id !== id);
@@ -92,20 +94,20 @@ export default function Accounts() {
     if (type === 'social') updates.socialMedia = plan.accounts.socialMedia.filter(s => s.id !== id);
 
     const updatedPlan = { ...plan, accounts: updates };
-    await updatePlan(updatedPlan, 'Item deleted');
+    await updatePlan(updatedPlan, t('accounts.itemDeleted'));
   };
 
   const statusOptions = [
-    { value: 'keep', label: 'Keep' },
-    { value: 'cancel', label: 'Cancel' },
-    { value: 'review', label: 'Review' },
+    { value: 'keep', label: t('accounts.fields.statusKeep') },
+    { value: 'cancel', label: t('accounts.fields.statusCancel') },
+    { value: 'review', label: t('accounts.fields.statusReview') },
   ];
 
   const dispositionOptions = [
-    { value: 'keep', label: 'Keep Active' },
-    { value: 'close', label: 'Close Account' },
-    { value: 'export_first', label: 'Export Data First, Then Close' },
-    { value: 'memorialize', label: 'Memorialize' },
+    { value: 'keep', label: t('accounts.fields.dispositionKeep') },
+    { value: 'close', label: t('accounts.fields.dispositionClose') },
+    { value: 'export_first', label: t('accounts.fields.dispositionExport') },
+    { value: 'memorialize', label: t('accounts.fields.dispositionMemorialize') },
   ];
 
   return (
@@ -113,14 +115,14 @@ export default function Accounts() {
       {plan && (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Accounts</h1>
-          <p className="text-sm sm:text-base text-gray-600">Track subscriptions, cloud services, domains, and hosting</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('accounts.title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{t('accounts.description')}</p>
         </div>
 
-        <Card title="Subscriptions" action={<Button onClick={() => subForm.openModal()}>Add</Button>}>
+        <Card title={t('accounts.subscriptions')} action={<Button onClick={() => subForm.openModal()}>{t('common.add')}</Button>}>
           <div className="space-y-3">
             {plan.accounts.subscriptions.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No subscriptions added</p>
+              <p className="text-gray-500 text-sm italic">{t('accounts.noSubscriptions')}</p>
             ) : (
               plan.accounts.subscriptions.map(sub => (
                 <div key={sub.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
@@ -146,18 +148,18 @@ export default function Accounts() {
           </div>
         </Card>
 
-        <Card title="Cloud Services" action={<Button onClick={() => cloudForm.openModal()}>Add</Button>}>
-          <p className="text-sm text-gray-600 mb-4">Services that could result in unexpected charges (AWS, Azure, cloud storage, etc.)</p>
+        <Card title={t('accounts.cloudServices')} action={<Button onClick={() => cloudForm.openModal()}>{t('common.add')}</Button>}>
+          <p className="text-sm text-gray-600 mb-4">{t('accounts.cloudServicesDescription')}</p>
           <div className="space-y-3">
             {plan.accounts.cloudServices.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No cloud services added</p>
+              <p className="text-gray-500 text-sm italic">{t('accounts.noCloudServices')}</p>
             ) : (
               plan.accounts.cloudServices.map(cloud => (
                 <div key={cloud.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <div className="font-medium text-gray-900">{cloud.name}</div>
-                      {cloud.billingWarning && <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">High Bill Risk</span>}
+                      {cloud.billingWarning && <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">{t('accounts.fields.highBillRisk')}</span>}
                     </div>
                     <div className="text-sm text-gray-600">{cloud.provider}</div>
                     {cloud.notes && <div className="text-sm text-gray-500 mt-1">{cloud.notes}</div>}
@@ -179,17 +181,17 @@ export default function Accounts() {
           </div>
         </Card>
 
-        <Card title="Domains" action={<Button onClick={() => domainForm.openModal()}>Add</Button>}>
+        <Card title={t('accounts.domains')} action={<Button onClick={() => domainForm.openModal()}>{t('common.add')}</Button>}>
           <div className="space-y-3">
             {plan.accounts.domains.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No domains added</p>
+              <p className="text-gray-500 text-sm italic">{t('accounts.noDomains')}</p>
             ) : (
               plan.accounts.domains.map(domain => (
                 <div key={domain.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="font-medium text-gray-900">{domain.name}</div>
                     <div className="text-sm text-gray-600">{domain.registrar}</div>
-                    {domain.expirationDate && <div className="text-sm text-gray-500 mt-1">Expires: {domain.expirationDate}</div>}
+                    {domain.expirationDate && <div className="text-sm text-gray-500 mt-1">{t('accounts.fields.expires')}: {domain.expirationDate}</div>}
                     {domain.notes && <div className="text-sm text-gray-500 mt-1">{domain.notes}</div>}
                   </div>
                   <div className="flex gap-2">
@@ -206,17 +208,17 @@ export default function Accounts() {
           </div>
         </Card>
 
-        <Card title="Hosting" action={<Button onClick={() => hostingForm.openModal()}>Add</Button>}>
+        <Card title={t('accounts.hosting')} action={<Button onClick={() => hostingForm.openModal()}>{t('common.add')}</Button>}>
           <div className="space-y-3">
             {plan.accounts.hosting.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No hosting accounts added</p>
+              <p className="text-gray-500 text-sm italic">{t('accounts.noHosting')}</p>
             ) : (
               plan.accounts.hosting.map(hosting => (
                 <div key={hosting.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="font-medium text-gray-900">{hosting.provider}</div>
                     <div className="text-sm text-gray-600">{hosting.accountName}</div>
-                    {hosting.renewalDate && <div className="text-sm text-gray-500 mt-1">Renews: {hosting.renewalDate}</div>}
+                    {hosting.renewalDate && <div className="text-sm text-gray-500 mt-1">{t('accounts.fields.renews')}: {hosting.renewalDate}</div>}
                     {hosting.notes && <div className="text-sm text-gray-500 mt-1">{hosting.notes}</div>}
                   </div>
                   <div className="flex gap-2">
@@ -233,13 +235,13 @@ export default function Accounts() {
           </div>
         </Card>
 
-        <Card title="Social Media Accounts" action={<Button onClick={() => socialForm.openModal()}>Add</Button>}>
+        <Card title={t('accounts.socialMedia')} action={<Button onClick={() => socialForm.openModal()}>{t('common.add')}</Button>}>
           <p className="text-sm text-gray-600 mb-4">
-            Document how you want social media accounts handled
+            {t('accounts.socialMediaDescription')}
           </p>
           <div className="space-y-3">
             {plan.accounts.socialMedia.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No social media accounts added</p>
+              <p className="text-gray-500 text-sm italic">{t('accounts.noSocialMedia')}</p>
             ) : (
               plan.accounts.socialMedia.map(social => (
                 <div key={social.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
@@ -247,7 +249,7 @@ export default function Accounts() {
                     <div className="font-medium text-gray-900">{social.platform}</div>
                     <div className="text-sm text-gray-600">@{social.username}</div>
                     <div className="text-sm text-gray-500 mt-1">
-                      Disposition: {social.disposition === 'keep' ? 'Keep Active' : social.disposition === 'close' ? 'Close' : social.disposition === 'export_first' ? 'Export First' : 'Memorialize'}
+                      {t('accounts.fields.disposition')}: {social.disposition === 'keep' ? t('accounts.fields.dispositionKeep') : social.disposition === 'close' ? t('accounts.fields.dispositionClose') : social.disposition === 'export_first' ? t('accounts.fields.dispositionExport') : t('accounts.fields.dispositionMemorialize')}
                     </div>
                     {social.notes && <div className="text-sm text-gray-500 mt-1">{social.notes}</div>}
                   </div>
@@ -265,64 +267,64 @@ export default function Accounts() {
           </div>
         </Card>
 
-        <Modal isOpen={subForm.isModalOpen} onClose={subForm.closeModal} title={subForm.editingItem ? 'Edit Subscription' : 'Add Subscription'} footer={<><Button variant="secondary" onClick={subForm.closeModal}>Cancel</Button><Button onClick={handleSaveSubscription} disabled={!subForm.formData.name?.trim()}>Save</Button></>}>
+        <Modal isOpen={subForm.isModalOpen} onClose={subForm.closeModal} title={subForm.editingItem ? t('accounts.editSubscription') : t('accounts.addSubscription')} footer={<><Button variant="secondary" onClick={subForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveSubscription} disabled={!subForm.formData.name?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Name" value={subForm.formData.name || ''} onChange={(e) => subForm.updateField('name', e.target.value)} required />
-            <Input label="Type" value={subForm.formData.type || ''} onChange={(e) => subForm.updateField('type', e.target.value)} placeholder="e.g., Streaming, Software, Magazine" />
-            <Select label="Status" value={subForm.formData.status || 'review'} onChange={(e) => subForm.updateField('status', e.target.value as AccountStatus)} options={statusOptions} />
+            <Input label={t('accounts.fields.name')} value={subForm.formData.name || ''} onChange={(e) => subForm.updateField('name', e.target.value)} required />
+            <Input label={t('accounts.fields.type')} value={subForm.formData.type || ''} onChange={(e) => subForm.updateField('type', e.target.value)} placeholder={t('accounts.fields.typePlaceholder')} />
+            <Select label={t('accounts.fields.status')} value={subForm.formData.status || 'review'} onChange={(e) => subForm.updateField('status', e.target.value as AccountStatus)} options={statusOptions} />
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={subForm.formData.autoPayEnabled || false} onChange={(e) => subForm.updateField('autoPayEnabled', e.target.checked)} className="rounded border-gray-300" />
-              <span className="text-sm text-gray-700">Auto-pay enabled</span>
+              <span className="text-sm text-gray-700">{t('accounts.fields.autoPayEnabled')}</span>
             </label>
-            <Input label="Contract End Date" type="date" value={subForm.formData.contractEndDate || ''} onChange={(e) => subForm.updateField('contractEndDate', e.target.value)} />
-            <Input label="Cancellation Notice Period (days)" type="number" value={subForm.formData.cancellationNoticeDays?.toString() || ''} onChange={(e) => subForm.updateField('cancellationNoticeDays', parseInt(e.target.value) || 0)} placeholder="e.g., 30" />
-            <Input label="Payment Method" value={subForm.formData.paymentMethod || ''} onChange={(e) => subForm.updateField('paymentMethod', e.target.value)} placeholder="e.g., Credit card ending in 1234" />
-            <TextArea label="Notes" value={subForm.formData.notes || ''} onChange={(e) => subForm.updateField('notes', e.target.value)} />
+            <Input label={t('accounts.fields.contractEndDate')} type="date" value={subForm.formData.contractEndDate || ''} onChange={(e) => subForm.updateField('contractEndDate', e.target.value)} />
+            <Input label={t('accounts.fields.cancellationNoticeDays')} type="number" value={subForm.formData.cancellationNoticeDays?.toString() || ''} onChange={(e) => subForm.updateField('cancellationNoticeDays', parseInt(e.target.value) || 0)} placeholder={t('accounts.fields.cancellationNoticeDaysPlaceholder')} />
+            <Input label={t('accounts.fields.paymentMethod')} value={subForm.formData.paymentMethod || ''} onChange={(e) => subForm.updateField('paymentMethod', e.target.value)} placeholder={t('accounts.fields.paymentMethodPlaceholder')} />
+            <TextArea label={t('contacts.notes')} value={subForm.formData.notes || ''} onChange={(e) => subForm.updateField('notes', e.target.value)} />
           </div>
         </Modal>
 
-        <Modal isOpen={cloudForm.isModalOpen} onClose={cloudForm.closeModal} title={cloudForm.editingItem ? 'Edit Cloud Service' : 'Add Cloud Service'} footer={<><Button variant="secondary" onClick={cloudForm.closeModal}>Cancel</Button><Button onClick={handleSaveCloud} disabled={!cloudForm.formData.name?.trim()}>Save</Button></>}>
+        <Modal isOpen={cloudForm.isModalOpen} onClose={cloudForm.closeModal} title={cloudForm.editingItem ? t('accounts.editCloudService') : t('accounts.addCloudService')} footer={<><Button variant="secondary" onClick={cloudForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveCloud} disabled={!cloudForm.formData.name?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Name" value={cloudForm.formData.name || ''} onChange={(e) => cloudForm.updateField('name', e.target.value)} required />
-            <Input label="Provider" value={cloudForm.formData.provider || ''} onChange={(e) => cloudForm.updateField('provider', e.target.value)} placeholder="e.g., AWS, Azure, Google Cloud" />
-            <Select label="Status" value={cloudForm.formData.status || 'review'} onChange={(e) => cloudForm.updateField('status', e.target.value as AccountStatus)} options={statusOptions} />
+            <Input label={t('accounts.fields.name')} value={cloudForm.formData.name || ''} onChange={(e) => cloudForm.updateField('name', e.target.value)} required />
+            <Input label={t('accounts.fields.provider')} value={cloudForm.formData.provider || ''} onChange={(e) => cloudForm.updateField('provider', e.target.value)} placeholder={t('accounts.fields.providerPlaceholder')} />
+            <Select label={t('accounts.fields.status')} value={cloudForm.formData.status || 'review'} onChange={(e) => cloudForm.updateField('status', e.target.value as AccountStatus)} options={statusOptions} />
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={cloudForm.formData.autoPayEnabled || false} onChange={(e) => cloudForm.updateField('autoPayEnabled', e.target.checked)} className="rounded border-gray-300" />
-              <span className="text-sm text-gray-700">Auto-pay enabled</span>
+              <span className="text-sm text-gray-700">{t('accounts.fields.autoPayEnabled')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={cloudForm.formData.billingWarning || false} onChange={(e) => cloudForm.updateField('billingWarning', e.target.checked)} className="rounded border-gray-300" />
-              <span className="text-sm text-gray-700">High billing risk</span>
+              <span className="text-sm text-gray-700">{t('accounts.fields.highBillingRisk')}</span>
             </label>
-            <TextArea label="Notes" value={cloudForm.formData.notes || ''} onChange={(e) => cloudForm.updateField('notes', e.target.value)} />
+            <TextArea label={t('contacts.notes')} value={cloudForm.formData.notes || ''} onChange={(e) => cloudForm.updateField('notes', e.target.value)} />
           </div>
         </Modal>
 
-        <Modal isOpen={domainForm.isModalOpen} onClose={domainForm.closeModal} title={domainForm.editingItem ? 'Edit Domain' : 'Add Domain'} footer={<><Button variant="secondary" onClick={domainForm.closeModal}>Cancel</Button><Button onClick={handleSaveDomain} disabled={!domainForm.formData.name?.trim()}>Save</Button></>}>
+        <Modal isOpen={domainForm.isModalOpen} onClose={domainForm.closeModal} title={domainForm.editingItem ? t('accounts.editDomain') : t('accounts.addDomain')} footer={<><Button variant="secondary" onClick={domainForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveDomain} disabled={!domainForm.formData.name?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Domain Name" value={domainForm.formData.name || ''} onChange={(e) => domainForm.updateField('name', e.target.value)} required />
-            <Input label="Registrar" value={domainForm.formData.registrar || ''} onChange={(e) => domainForm.updateField('registrar', e.target.value)} />
-            <Input label="Expiration Date" type="date" value={domainForm.formData.expirationDate || ''} onChange={(e) => domainForm.updateField('expirationDate', e.target.value)} />
-            <TextArea label="Notes" value={domainForm.formData.notes || ''} onChange={(e) => domainForm.updateField('notes', e.target.value)} />
+            <Input label={t('accounts.fields.domainName')} value={domainForm.formData.name || ''} onChange={(e) => domainForm.updateField('name', e.target.value)} required />
+            <Input label={t('accounts.fields.registrar')} value={domainForm.formData.registrar || ''} onChange={(e) => domainForm.updateField('registrar', e.target.value)} />
+            <Input label={t('accounts.fields.expirationDate')} type="date" value={domainForm.formData.expirationDate || ''} onChange={(e) => domainForm.updateField('expirationDate', e.target.value)} />
+            <TextArea label={t('contacts.notes')} value={domainForm.formData.notes || ''} onChange={(e) => domainForm.updateField('notes', e.target.value)} />
           </div>
         </Modal>
 
-        <Modal isOpen={hostingForm.isModalOpen} onClose={hostingForm.closeModal} title={hostingForm.editingItem ? 'Edit Hosting' : 'Add Hosting'} footer={<><Button variant="secondary" onClick={hostingForm.closeModal}>Cancel</Button><Button onClick={handleSaveHosting} disabled={!hostingForm.formData.provider?.trim()}>Save</Button></>}>
+        <Modal isOpen={hostingForm.isModalOpen} onClose={hostingForm.closeModal} title={hostingForm.editingItem ? t('accounts.editHosting') : t('accounts.addHosting')} footer={<><Button variant="secondary" onClick={hostingForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveHosting} disabled={!hostingForm.formData.provider?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Provider" value={hostingForm.formData.provider || ''} onChange={(e) => hostingForm.updateField('provider', e.target.value)} required />
-            <Input label="Account Name" value={hostingForm.formData.accountName || ''} onChange={(e) => hostingForm.updateField('accountName', e.target.value)} />
-            <Input label="Renewal Date" type="date" value={hostingForm.formData.renewalDate || ''} onChange={(e) => hostingForm.updateField('renewalDate', e.target.value)} />
-            <TextArea label="Notes" value={hostingForm.formData.notes || ''} onChange={(e) => hostingForm.updateField('notes', e.target.value)} />
+            <Input label={t('accounts.fields.provider')} value={hostingForm.formData.provider || ''} onChange={(e) => hostingForm.updateField('provider', e.target.value)} required />
+            <Input label={t('accounts.fields.accountName')} value={hostingForm.formData.accountName || ''} onChange={(e) => hostingForm.updateField('accountName', e.target.value)} />
+            <Input label={t('accounts.fields.renewalDate')} type="date" value={hostingForm.formData.renewalDate || ''} onChange={(e) => hostingForm.updateField('renewalDate', e.target.value)} />
+            <TextArea label={t('contacts.notes')} value={hostingForm.formData.notes || ''} onChange={(e) => hostingForm.updateField('notes', e.target.value)} />
           </div>
         </Modal>
 
-        <Modal isOpen={socialForm.isModalOpen} onClose={socialForm.closeModal} title={socialForm.editingItem ? 'Edit Social Media Account' : 'Add Social Media Account'} footer={<><Button variant="secondary" onClick={socialForm.closeModal}>Cancel</Button><Button onClick={handleSaveSocial} disabled={!socialForm.formData.platform?.trim()}>Save</Button></>}>
+        <Modal isOpen={socialForm.isModalOpen} onClose={socialForm.closeModal} title={socialForm.editingItem ? t('accounts.editSocialMedia') : t('accounts.addSocialMedia')} footer={<><Button variant="secondary" onClick={socialForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveSocial} disabled={!socialForm.formData.platform?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Platform" value={socialForm.formData.platform || ''} onChange={(e) => socialForm.updateField('platform', e.target.value)} placeholder="e.g., Facebook, Twitter, Instagram" required />
-            <Input label="Username/Handle" value={socialForm.formData.username || ''} onChange={(e) => socialForm.updateField('username', e.target.value)} placeholder="Without @ symbol" />
-            <Select label="Disposition" value={socialForm.formData.disposition || 'keep'} onChange={(e) => socialForm.updateField('disposition', e.target.value as SocialMediaDisposition)} options={dispositionOptions} />
-            <TextArea label="Export Instructions" value={socialForm.formData.exportInstructions || ''} onChange={(e) => socialForm.updateField('exportInstructions', e.target.value)} placeholder="If exporting data, explain how to do it" rows={3} />
-            <TextArea label="Notes" value={socialForm.formData.notes || ''} onChange={(e) => socialForm.updateField('notes', e.target.value)} />
+            <Input label={t('accounts.fields.platform')} value={socialForm.formData.platform || ''} onChange={(e) => socialForm.updateField('platform', e.target.value)} placeholder={t('accounts.fields.platformPlaceholder')} required />
+            <Input label={t('accounts.fields.username')} value={socialForm.formData.username || ''} onChange={(e) => socialForm.updateField('username', e.target.value)} placeholder={t('accounts.fields.usernamePlaceholder')} />
+            <Select label={t('accounts.fields.disposition')} value={socialForm.formData.disposition || 'keep'} onChange={(e) => socialForm.updateField('disposition', e.target.value as SocialMediaDisposition)} options={dispositionOptions} />
+            <TextArea label={t('accounts.fields.exportInstructions')} value={socialForm.formData.exportInstructions || ''} onChange={(e) => socialForm.updateField('exportInstructions', e.target.value)} placeholder={t('accounts.fields.exportInstructionsPlaceholder')} rows={3} />
+            <TextArea label={t('contacts.notes')} value={socialForm.formData.notes || ''} onChange={(e) => socialForm.updateField('notes', e.target.value)} />
           </div>
         </Modal>
       </div>

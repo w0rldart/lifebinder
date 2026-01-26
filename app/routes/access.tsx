@@ -8,12 +8,14 @@ import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
+import { useLanguage } from '~/lib/language-context';
 import type { PrimaryEmail, Device, NetworkInfrastructure, IoTDevice } from '~/types';
 import { Edit2, Trash2 } from 'lucide-react';
 
 export default function Access() {
   const { plan } = useSession();
   const { updatePlan } = usePlanUpdater();
+  const { t } = useLanguage();
 
   const emailForm = useModalForm<Partial<PrimaryEmail>>({ email: '', provider: '', notes: '' });
   const deviceForm = useModalForm<Partial<Device>>({ type: '', name: '', retentionNotes: '', intendedRecipient: '', disposalInstructions: '', requiresDataWipe: false });
@@ -28,16 +30,16 @@ export default function Access() {
       : [...plan.access.primaryEmails, { ...emailForm.formData, id: crypto.randomUUID() } as PrimaryEmail];
 
     const updatedPlan = { ...plan, access: { ...plan.access, primaryEmails: updatedEmails } };
-    await updatePlan(updatedPlan, emailForm.editingItem ? 'Email updated successfully' : 'Email added successfully');
+    await updatePlan(updatedPlan, emailForm.editingItem ? t('access.emailUpdated') : t('access.emailAdded'));
     emailForm.closeModal();
   };
 
   const handleDeleteEmail = async (id: string) => {
-    if (!plan || !confirm('Delete this email account?')) return;
+    if (!plan || !confirm(t('access.deleteEmailConfirm'))) return;
 
     const updatedEmails = plan.access.primaryEmails.filter(e => e.id !== id);
     const updatedPlan = { ...plan, access: { ...plan.access, primaryEmails: updatedEmails } };
-    await updatePlan(updatedPlan, 'Email deleted successfully');
+    await updatePlan(updatedPlan, t('access.emailDeleted'));
   };
 
   const handleSaveDevice = async () => {
@@ -48,23 +50,23 @@ export default function Access() {
       : [...plan.access.devices, { ...deviceForm.formData, id: crypto.randomUUID() } as Device];
 
     const updatedPlan = { ...plan, access: { ...plan.access, devices: updatedDevices } };
-    await updatePlan(updatedPlan, deviceForm.editingItem ? 'Device updated successfully' : 'Device added successfully');
+    await updatePlan(updatedPlan, deviceForm.editingItem ? t('access.deviceUpdated') : t('access.deviceAdded'));
     deviceForm.closeModal();
   };
 
   const handleDeleteDevice = async (id: string) => {
-    if (!plan || !confirm('Delete this device?')) return;
+    if (!plan || !confirm(t('access.deleteDeviceConfirm'))) return;
 
     const updatedDevices = plan.access.devices.filter(d => d.id !== id);
     const updatedPlan = { ...plan, access: { ...plan.access, devices: updatedDevices } };
-    await updatePlan(updatedPlan, 'Device deleted successfully');
+    await updatePlan(updatedPlan, t('access.deviceDeleted'));
   };
 
   const handleUpdateNotes = async (field: 'passwordManagerNotes' | 'twoFANotes', value: string) => {
     if (!plan) return;
 
     const updatedPlan = { ...plan, access: { ...plan.access, [field]: value } };
-    await updatePlan(updatedPlan, 'Notes updated successfully');
+    await updatePlan(updatedPlan, t('access.notesUpdated'));
   };
 
   const handleSaveNetwork = async () => {
@@ -75,16 +77,16 @@ export default function Access() {
       : [...plan.access.networkInfrastructure, { ...networkForm.formData, id: crypto.randomUUID() } as NetworkInfrastructure];
 
     const updatedPlan = { ...plan, access: { ...plan.access, networkInfrastructure: updatedNetwork } };
-    await updatePlan(updatedPlan, networkForm.editingItem ? 'Network infrastructure updated successfully' : 'Network infrastructure added successfully');
+    await updatePlan(updatedPlan, networkForm.editingItem ? t('access.networkUpdated') : t('access.networkAdded'));
     networkForm.closeModal();
   };
 
   const handleDeleteNetwork = async (id: string) => {
-    if (!plan || !confirm('Delete this network infrastructure item?')) return;
+    if (!plan || !confirm(t('access.deleteNetworkConfirm'))) return;
 
     const updatedNetwork = plan.access.networkInfrastructure.filter(n => n.id !== id);
     const updatedPlan = { ...plan, access: { ...plan.access, networkInfrastructure: updatedNetwork } };
-    await updatePlan(updatedPlan, 'Network infrastructure deleted successfully');
+    await updatePlan(updatedPlan, t('access.networkDeleted'));
   };
 
   const handleSaveIoT = async () => {
@@ -95,16 +97,16 @@ export default function Access() {
       : [...plan.access.iotDevices, { ...iotForm.formData, id: crypto.randomUUID() } as IoTDevice];
 
     const updatedPlan = { ...plan, access: { ...plan.access, iotDevices: updatedIoT } };
-    await updatePlan(updatedPlan, iotForm.editingItem ? 'IoT device updated successfully' : 'IoT device added successfully');
+    await updatePlan(updatedPlan, iotForm.editingItem ? t('access.iotUpdated') : t('access.iotAdded'));
     iotForm.closeModal();
   };
 
   const handleDeleteIoT = async (id: string) => {
-    if (!plan || !confirm('Delete this IoT device?')) return;
+    if (!plan || !confirm(t('access.deleteIoTConfirm'))) return;
 
     const updatedIoT = plan.access.iotDevices.filter(i => i.id !== id);
     const updatedPlan = { ...plan, access: { ...plan.access, iotDevices: updatedIoT } };
-    await updatePlan(updatedPlan, 'IoT device deleted successfully');
+    await updatePlan(updatedPlan, t('access.iotDeleted'));
   };
 
   return (
@@ -112,20 +114,20 @@ export default function Access() {
       {plan && (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Access Information</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('access.title')}</h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Document where to find passwords and how to access accounts
+            {t('access.description')}
           </p>
         </div>
 
         <WarningBanner type="warning">
-          <strong>Security Notice:</strong> Avoid storing master passwords, PINs, or safe combinations here. Instead, note WHERE they can be found (e.g., "Master password stored in KeePass vault on desktop").
+          <strong>{t('access.securityNotice')}</strong> {t('access.securityNoticeText')}
         </WarningBanner>
 
-        <Card title="Primary Email Accounts" action={<Button onClick={() => emailForm.openModal()}>Add Email</Button>}>
+        <Card title={t('access.primaryEmails')} action={<Button onClick={() => emailForm.openModal()}>{t('access.addEmail')}</Button>}>
           <div className="space-y-3">
             {plan.access.primaryEmails.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No email accounts added yet</p>
+              <p className="text-gray-500 text-sm italic">{t('access.noEmailsYet')}</p>
             ) : (
               plan.access.primaryEmails.map(email => (
                 <div key={email.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
@@ -148,41 +150,41 @@ export default function Access() {
           </div>
         </Card>
 
-        <Card title="Password Manager">
+        <Card title={t('access.passwordManager')}>
           <TextArea
-            label="Location and Access Instructions"
+            label={t('access.locationAndAccessInstructions')}
             value={plan.access.passwordManagerNotes}
             onChange={(e) => handleUpdateNotes('passwordManagerNotes', e.target.value)}
-            placeholder="e.g., KeePass vault on desktop computer. Key file on USB drive in safe. Master password with attorney."
+            placeholder={t('access.passwordManagerPlaceholder')}
             rows={4}
-            helpText="Describe where your password manager is and how to access it"
+            helpText={t('access.passwordManagerHelpText')}
           />
         </Card>
 
-        <Card title="Two-Factor Authentication (2FA)">
+        <Card title={t('access.twoFA')}>
           <TextArea
-            label="Recovery Information"
+            label={t('access.recoveryInformation')}
             value={plan.access.twoFANotes}
             onChange={(e) => handleUpdateNotes('twoFANotes', e.target.value)}
-            placeholder="e.g., 2FA recovery codes in password manager. Authenticator app backup on secondary phone. SMS fallback to +1234567890."
+            placeholder={t('access.twoFAPlaceholder')}
             rows={4}
-            helpText="Explain how to recover 2FA codes or access accounts with 2FA"
+            helpText={t('access.twoFAHelpText')}
           />
         </Card>
 
-        <Card title="Network Infrastructure" action={<Button onClick={() => networkForm.openModal()}>Add Infrastructure</Button>}>
+        <Card title={t('access.networkInfrastructure')} action={<Button onClick={() => networkForm.openModal()}>{t('access.addInfrastructure')}</Button>}>
           <p className="text-sm text-gray-600 mb-4">
-            Router, modem, WiFi, and network access information
+            {t('access.networkDescription')}
           </p>
           <div className="space-y-3">
             {plan.access.networkInfrastructure.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No network infrastructure added yet</p>
+              <p className="text-gray-500 text-sm italic">{t('access.noNetworkYet')}</p>
             ) : (
               plan.access.networkInfrastructure.map(network => (
                 <div key={network.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{network.routerModemModel}</div>
-                    <div className="text-sm text-gray-600">WiFi: {network.wifiNetworkName || 'Not specified'}</div>
+                    <div className="text-sm text-gray-600">{t('access.wifiLabel')} {network.wifiNetworkName || t('access.notSpecified')}</div>
                     {network.notes && <div className="text-sm text-gray-500 mt-1">{network.notes}</div>}
                   </div>
                   <div className="flex gap-2">
@@ -199,20 +201,20 @@ export default function Access() {
           </div>
         </Card>
 
-        <Card title="IoT & Smart Home Devices" action={<Button onClick={() => iotForm.openModal()}>Add Device</Button>}>
+        <Card title={t('access.iotDevices')} action={<Button onClick={() => iotForm.openModal()}>{t('access.addDevice')}</Button>}>
           <p className="text-sm text-gray-600 mb-4">
-            Smart home devices, hubs, and IoT equipment that may need special handling
+            {t('access.iotDescription')}
           </p>
           <div className="space-y-3">
             {plan.access.iotDevices.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No IoT devices added yet</p>
+              <p className="text-gray-500 text-sm italic">{t('access.noIoTYet')}</p>
             ) : (
               plan.access.iotDevices.map(device => (
                 <div key={device.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{device.name}</div>
                     <div className="text-sm text-gray-600">{device.deviceType}</div>
-                    {device.recipientDisposition && <div className="text-sm text-gray-500 mt-1">Disposition: {device.recipientDisposition}</div>}
+                    {device.recipientDisposition && <div className="text-sm text-gray-500 mt-1">{t('access.dispositionLabel')} {device.recipientDisposition}</div>}
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => iotForm.openModal(device)} className="p-2 text-blue-600 hover:bg-blue-50 rounded">
@@ -228,21 +230,21 @@ export default function Access() {
           </div>
         </Card>
 
-        <Card title="Device Retention" action={<Button onClick={() => deviceForm.openModal()}>Add Device</Button>}>
+        <Card title={t('access.deviceRetention')} action={<Button onClick={() => deviceForm.openModal()}>{t('access.addDevice')}</Button>}>
           <p className="text-sm text-gray-600 mb-4">
-            Important devices to keep and for how long (phones, laptops, tablets with saved passwords or 2FA apps)
+            {t('access.deviceRetentionDescription')}
           </p>
           <div className="space-y-3">
             {plan.access.devices.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No devices added yet</p>
+              <p className="text-gray-500 text-sm italic">{t('access.noDevicesYet')}</p>
             ) : (
               plan.access.devices.map(device => (
                 <div key={device.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{device.name}</div>
                     <div className="text-sm text-gray-600">{device.type}</div>
-                    {device.intendedRecipient && <div className="text-sm text-gray-600 mt-1">Recipient: {device.intendedRecipient}</div>}
-                    {device.requiresDataWipe && <div className="text-sm text-orange-600 mt-1">⚠️ Requires data wipe</div>}
+                    {device.intendedRecipient && <div className="text-sm text-gray-600 mt-1">{t('access.recipientLabel')} {device.intendedRecipient}</div>}
+                    {device.requiresDataWipe && <div className="text-sm text-orange-600 mt-1">⚠️ {t('access.requiresDataWipe')}</div>}
                     {device.retentionNotes && <div className="text-sm text-gray-500 mt-1">{device.retentionNotes}</div>}
                   </div>
                   <div className="flex gap-2">
@@ -262,37 +264,37 @@ export default function Access() {
         <Modal
           isOpen={emailForm.isModalOpen}
           onClose={emailForm.closeModal}
-          title={emailForm.editingItem ? 'Edit Email' : 'Add Email'}
+          title={emailForm.editingItem ? t('access.modals.editEmail') : t('access.modals.addEmail')}
           footer={
             <>
               <Button variant="secondary" onClick={emailForm.closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleSaveEmail} disabled={!emailForm.formData.email?.trim()}>
-                Save
+                {t('common.save')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Email Address"
+              label={t('access.fields.emailAddress')}
               type="email"
               value={emailForm.formData.email || ''}
               onChange={(e) => emailForm.updateField('email', e.target.value)}
               required
             />
             <Input
-              label="Provider"
+              label={t('access.fields.provider')}
               value={emailForm.formData.provider || ''}
               onChange={(e) => emailForm.updateField('provider', e.target.value)}
-              placeholder="e.g., Gmail, Outlook"
+              placeholder={t('access.fields.providerPlaceholder')}
             />
             <TextArea
-              label="Notes"
+              label={t('contacts.notes')}
               value={emailForm.formData.notes || ''}
               onChange={(e) => emailForm.updateField('notes', e.target.value)}
-              placeholder="Recovery email, special instructions..."
+              placeholder={t('access.fields.notesPlaceholder')}
             />
           </div>
         </Modal>
@@ -300,43 +302,43 @@ export default function Access() {
         <Modal
           isOpen={deviceForm.isModalOpen}
           onClose={deviceForm.closeModal}
-          title={deviceForm.editingItem ? 'Edit Device' : 'Add Device'}
+          title={deviceForm.editingItem ? t('access.modals.editDevice') : t('access.modals.addDevice')}
           footer={
             <>
               <Button variant="secondary" onClick={deviceForm.closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleSaveDevice} disabled={!deviceForm.formData.name?.trim()}>
-                Save
+                {t('common.save')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Device Name"
+              label={t('access.fields.deviceName')}
               value={deviceForm.formData.name || ''}
               onChange={(e) => deviceForm.updateField('name', e.target.value)}
-              placeholder="e.g., iPhone 13, MacBook Pro"
+              placeholder={t('access.fields.deviceNamePlaceholder')}
               required
             />
             <Input
-              label="Type"
+              label={t('access.fields.type')}
               value={deviceForm.formData.type || ''}
               onChange={(e) => deviceForm.updateField('type', e.target.value)}
-              placeholder="Phone, Laptop, Tablet"
+              placeholder={t('access.fields.typePlaceholder')}
             />
             <Input
-              label="Intended Recipient"
+              label={t('access.fields.intendedRecipient')}
               value={deviceForm.formData.intendedRecipient || ''}
               onChange={(e) => deviceForm.updateField('intendedRecipient', e.target.value)}
-              placeholder="e.g., John Smith, Donate to charity"
+              placeholder={t('access.fields.intendedRecipientPlaceholder')}
             />
             <TextArea
-              label="Disposal Instructions"
+              label={t('access.fields.disposalInstructions')}
               value={deviceForm.formData.disposalInstructions || ''}
               onChange={(e) => deviceForm.updateField('disposalInstructions', e.target.value)}
-              placeholder="Special handling instructions for disposing or transferring this device"
+              placeholder={t('access.fields.disposalInstructionsPlaceholder')}
             />
             <div className="flex items-start">
               <input
@@ -347,15 +349,15 @@ export default function Access() {
                 className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label htmlFor="requiresDataWipe" className="ml-2 block text-sm text-gray-700">
-                Requires data wipe before disposal
-                <span className="block text-xs text-gray-500 mt-1">Check if this device should be securely wiped before transfer or disposal</span>
+                {t('access.fields.requiresDataWipeLabel')}
+                <span className="block text-xs text-gray-500 mt-1">{t('access.fields.requiresDataWipeHelp')}</span>
               </label>
             </div>
             <TextArea
-              label="Retention Notes"
+              label={t('access.fields.retentionNotes')}
               value={deviceForm.formData.retentionNotes || ''}
               onChange={(e) => deviceForm.updateField('retentionNotes', e.target.value)}
-              placeholder="e.g., Keep for at least 1 year - has authenticator app with 2FA codes"
+              placeholder={t('access.fields.retentionNotesPlaceholder')}
             />
           </div>
         </Modal>
@@ -363,67 +365,67 @@ export default function Access() {
         <Modal
           isOpen={networkForm.isModalOpen}
           onClose={networkForm.closeModal}
-          title={networkForm.editingItem ? 'Edit Network Infrastructure' : 'Add Network Infrastructure'}
+          title={networkForm.editingItem ? t('access.modals.editNetwork') : t('access.modals.addNetwork')}
           footer={
             <>
               <Button variant="secondary" onClick={networkForm.closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleSaveNetwork} disabled={!networkForm.formData.routerModemModel?.trim()}>
-                Save
+                {t('common.save')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Router/Modem Model"
+              label={t('access.fields.routerModemModel')}
               value={networkForm.formData.routerModemModel || ''}
               onChange={(e) => networkForm.updateField('routerModemModel', e.target.value)}
-              placeholder="e.g., Netgear Nighthawk R7000"
+              placeholder={t('access.fields.routerModemModelPlaceholder')}
               required
             />
             <Input
-              label="WiFi Network Name"
+              label={t('access.fields.wifiNetworkName')}
               value={networkForm.formData.wifiNetworkName || ''}
               onChange={(e) => networkForm.updateField('wifiNetworkName', e.target.value)}
-              placeholder="Network SSID"
+              placeholder={t('access.fields.wifiNetworkNamePlaceholder')}
             />
             <Input
-              label="WiFi Credentials Location"
+              label={t('access.fields.wifiCredentialsLocation')}
               value={networkForm.formData.wifiCredentialsLocation || ''}
               onChange={(e) => networkForm.updateField('wifiCredentialsLocation', e.target.value)}
-              placeholder="Where password is stored"
+              placeholder={t('access.fields.wifiCredentialsLocationPlaceholder')}
             />
             <Input
-              label="Admin Panel URL"
+              label={t('access.fields.adminPanelUrl')}
               value={networkForm.formData.adminPanelUrl || ''}
               onChange={(e) => networkForm.updateField('adminPanelUrl', e.target.value)}
-              placeholder="e.g., 192.168.1.1 or http://routerlogin.net"
+              placeholder={t('access.fields.adminPanelUrlPlaceholder')}
             />
             <Input
-              label="Admin Credentials Location"
+              label={t('access.fields.adminCredentialsLocation')}
               value={networkForm.formData.adminCredentialsLocation || ''}
               onChange={(e) => networkForm.updateField('adminCredentialsLocation', e.target.value)}
-              placeholder="Where admin login is stored"
+              placeholder={t('access.fields.adminCredentialsLocationPlaceholder')}
             />
             <TextArea
-              label="Restart Procedures"
+              label={t('access.fields.restartProcedures')}
               value={networkForm.formData.restartProcedures || ''}
               onChange={(e) => networkForm.updateField('restartProcedures', e.target.value)}
-              placeholder="Steps to restart or reset the network equipment"
+              placeholder={t('access.fields.restartProceduresPlaceholder')}
             />
             <Input
-              label="Technical Support Contact"
+              label={t('access.fields.technicalSupportContact')}
               value={networkForm.formData.technicalSupportContact || ''}
               onChange={(e) => networkForm.updateField('technicalSupportContact', e.target.value)}
-              placeholder="ISP support phone number"
+              placeholder={t('access.fields.technicalSupportContactPlaceholder')}
             />
             <TextArea
-              label="Notes"
+              label={t('contacts.notes')}
               value={networkForm.formData.notes || ''}
               onChange={(e) => networkForm.updateField('notes', e.target.value)}
-              placeholder="Additional information"
+              placeholder={t('access.fields.additionalInformation')}
             />
           </div>
         </Modal>
@@ -431,55 +433,55 @@ export default function Access() {
         <Modal
           isOpen={iotForm.isModalOpen}
           onClose={iotForm.closeModal}
-          title={iotForm.editingItem ? 'Edit IoT Device' : 'Add IoT Device'}
+          title={iotForm.editingItem ? t('access.modals.editIoT') : t('access.modals.addIoT')}
           footer={
             <>
               <Button variant="secondary" onClick={iotForm.closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleSaveIoT} disabled={!iotForm.formData.name?.trim()}>
-                Save
+                {t('common.save')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Device Name"
+              label={t('access.fields.deviceName')}
               value={iotForm.formData.name || ''}
               onChange={(e) => iotForm.updateField('name', e.target.value)}
-              placeholder="e.g., Living Room Thermostat"
+              placeholder={t('access.fields.deviceNamePlaceholder')}
               required
             />
             <Input
-              label="Device Type"
+              label={t('access.fields.deviceType')}
               value={iotForm.formData.deviceType || ''}
               onChange={(e) => iotForm.updateField('deviceType', e.target.value)}
-              placeholder="e.g., Smart Thermostat, Security Camera"
+              placeholder={t('access.fields.deviceTypePlaceholder')}
             />
             <Input
-              label="Hub/Controller"
+              label={t('access.fields.hubController')}
               value={iotForm.formData.hubController || ''}
               onChange={(e) => iotForm.updateField('hubController', e.target.value)}
-              placeholder="e.g., SmartThings Hub, Amazon Echo"
+              placeholder={t('access.fields.hubControllerPlaceholder')}
             />
             <Input
-              label="Credentials Location"
+              label={t('access.fields.credentialsLocation')}
               value={iotForm.formData.credentialsLocation || ''}
               onChange={(e) => iotForm.updateField('credentialsLocation', e.target.value)}
-              placeholder="Where account/app credentials are stored"
+              placeholder={t('access.fields.credentialsLocationPlaceholder')}
             />
             <TextArea
-              label="Recipient/Disposition"
+              label={t('access.fields.recipientDisposition')}
               value={iotForm.formData.recipientDisposition || ''}
               onChange={(e) => iotForm.updateField('recipientDisposition', e.target.value)}
-              placeholder="Who should receive this device or how to dispose of it"
+              placeholder={t('access.fields.recipientDispositionPlaceholder')}
             />
             <TextArea
-              label="Notes"
+              label={t('contacts.notes')}
               value={iotForm.formData.notes || ''}
               onChange={(e) => iotForm.updateField('notes', e.target.value)}
-              placeholder="Additional setup or configuration details"
+              placeholder={t('access.fields.additionalSetupDetails')}
             />
           </div>
         </Modal>

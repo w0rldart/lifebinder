@@ -9,6 +9,7 @@ import { Select } from '~/components/Select';
 import { EmptyState } from '~/components/EmptyState';
 import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
 import type { EstateContact, Asset, Beneficiary, SensitivityLevel, AssetInputMode, EstateContactType } from '~/types';
@@ -17,6 +18,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 export default function WillTestaments() {
   const { plan } = useSession();
   const { updatePlan } = usePlanUpdater();
+  const { t } = useLanguage();
 
   const contactForm = useModalForm<Partial<EstateContact>>({
     type: 'new',
@@ -52,18 +54,18 @@ export default function WillTestaments() {
   const assets = plan?.willTestaments?.assets || [];
 
   const sensitivityOptions = [
-    { value: 'normal', label: 'Normal - Standard protection' },
-    { value: 'high', label: 'High - Extra sensitive information' },
+    { value: 'normal', label: t('willTestaments.sensitivityOptions.normal') },
+    { value: 'high', label: t('willTestaments.sensitivityOptions.high') },
   ];
 
   const contactTypeOptions = [
-    { value: 'existing', label: 'Link to existing contact' },
-    { value: 'new', label: 'Create new estate-specific contact' },
+    { value: 'existing', label: t('willTestaments.contactTypeOptions.existing') },
+    { value: 'new', label: t('willTestaments.contactTypeOptions.new') },
   ];
 
   const assetModeOptions = [
-    { value: 'simple', label: 'Simple text description' },
-    { value: 'structured', label: 'Detailed beneficiary breakdown' },
+    { value: 'simple', label: t('willTestaments.assetModeOptions.simple') },
+    { value: 'structured', label: t('willTestaments.assetModeOptions.structured') },
   ];
 
   const handleSensitivityChange = async (sensitivity: SensitivityLevel) => {
@@ -111,18 +113,18 @@ export default function WillTestaments() {
       ...plan,
       willTestaments: { ...plan.willTestaments, estateContacts: updated },
     };
-    await updatePlan(updatedPlan, contactForm.editingItem ? 'Contact updated' : 'Contact added');
+    await updatePlan(updatedPlan, contactForm.editingItem ? t('willTestaments.contactUpdated') : t('willTestaments.contactAdded'));
     contactForm.closeModal();
   };
 
   const handleDeleteContact = async (id: string) => {
-    if (!plan || !confirm('Delete this contact?')) return;
+    if (!plan || !confirm(t('willTestaments.deleteContact'))) return;
     const updated = estateContacts.filter(c => c.id !== id);
     const updatedPlan = {
       ...plan,
       willTestaments: { ...plan.willTestaments, estateContacts: updated },
     };
-    await updatePlan(updatedPlan, 'Contact deleted');
+    await updatePlan(updatedPlan, t('willTestaments.contactDeleted'));
   };
 
   const handleSaveAsset = async () => {
@@ -148,18 +150,18 @@ export default function WillTestaments() {
       ...plan,
       willTestaments: { ...plan.willTestaments, assets: updated },
     };
-    await updatePlan(updatedPlan, assetForm.editingItem ? 'Asset updated' : 'Asset added');
+    await updatePlan(updatedPlan, assetForm.editingItem ? t('willTestaments.assetUpdated') : t('willTestaments.assetAdded'));
     assetForm.closeModal();
   };
 
   const handleDeleteAsset = async (id: string) => {
-    if (!plan || !confirm('Delete this asset?')) return;
+    if (!plan || !confirm(t('willTestaments.deleteAsset'))) return;
     const updated = assets.filter(a => a.id !== id);
     const updatedPlan = {
       ...plan,
       willTestaments: { ...plan.willTestaments, assets: updated },
     };
-    await updatePlan(updatedPlan, 'Asset deleted');
+    await updatePlan(updatedPlan, t('willTestaments.assetDeleted'));
   };
 
   const handleAddBeneficiary = () => {
@@ -203,99 +205,99 @@ export default function WillTestaments() {
       {plan && (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Will & Testaments</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('willTestaments.title')}</h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Manage wills, trusts, assets, beneficiaries, and testament instructions
+            {t('willTestaments.description')}
           </p>
         </div>
 
-        <Card title="Sensitivity Level">
+        <Card title={t('willTestaments.sensitivityLevel')}>
           <div className="space-y-3">
             <Select
-              label="Data Sensitivity"
+              label={t('willTestaments.dataSensitivity')}
               value={plan.willTestaments.sensitivity}
               onChange={(e) => handleSensitivityChange(e.target.value as SensitivityLevel)}
               options={sensitivityOptions}
             />
             <WarningBanner type={plan.willTestaments.sensitivity === 'high' ? 'warning' : 'info'}>
               {plan.willTestaments.sensitivity === 'high' ? (
-                <span><strong>High Sensitivity:</strong> This information contains extra sensitive will and testament details.</span>
+                <span><strong>{t('willTestaments.highSensitivity')}</strong> {t('willTestaments.highSensitivityText')}</span>
               ) : (
-                <span><strong>Normal Sensitivity:</strong> Standard protection for will and testament information.</span>
+                <span><strong>{t('willTestaments.normalSensitivity')}</strong> {t('willTestaments.normalSensitivityText')}</span>
               )}
             </WarningBanner>
           </div>
         </Card>
 
-        <Card title="Key Documents & Professionals">
+        <Card title={t('willTestaments.keyDocsProfessionals')}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Input
-              label="Will Location"
+              label={t('willTestaments.willLocation')}
               value={plan.willTestaments.willLocation}
               onChange={(e) => handleFieldUpdate('willLocation', e.target.value)}
-              placeholder="e.g., Safe deposit box, attorney's office"
+              placeholder={t('willTestaments.willLocationPlaceholder')}
             />
             <Input
-              label="Trust Location"
+              label={t('willTestaments.trustLocation')}
               value={plan.willTestaments.trustLocation}
               onChange={(e) => handleFieldUpdate('trustLocation', e.target.value)}
-              placeholder="e.g., Home safe, attorney's office"
+              placeholder={t('willTestaments.trustLocationPlaceholder')}
             />
             <Input
-              label="Executor Name"
+              label={t('willTestaments.executorName')}
               value={plan.willTestaments.executor}
               onChange={(e) => handleFieldUpdate('executor', e.target.value)}
-              placeholder="Primary executor"
+              placeholder={t('willTestaments.executorPlaceholder')}
             />
             <Input
-              label="Executor Contact"
+              label={t('willTestaments.executorContact')}
               value={plan.willTestaments.executorContact}
               onChange={(e) => handleFieldUpdate('executorContact', e.target.value)}
-              placeholder="Phone or email"
+              placeholder={t('willTestaments.executorContactPlaceholder')}
             />
             <Input
-              label="Estate Attorney"
+              label={t('willTestaments.estateAttorney')}
               value={plan.willTestaments.attorney}
               onChange={(e) => handleFieldUpdate('attorney', e.target.value)}
-              placeholder="Attorney name"
+              placeholder={t('willTestaments.attorneyPlaceholder')}
             />
             <Input
-              label="Attorney Contact"
+              label={t('willTestaments.attorneyContact')}
               value={plan.willTestaments.attorneyContact}
               onChange={(e) => handleFieldUpdate('attorneyContact', e.target.value)}
-              placeholder="Phone or email"
+              placeholder={t('willTestaments.attorneyContactPlaceholder')}
             />
             <Input
-              label="Accountant"
+              label={t('willTestaments.accountant')}
               value={plan.willTestaments.accountant}
               onChange={(e) => handleFieldUpdate('accountant', e.target.value)}
-              placeholder="Accountant name"
+              placeholder={t('willTestaments.accountantPlaceholder')}
             />
             <Input
-              label="Accountant Contact"
+              label={t('willTestaments.accountantContact')}
               value={plan.willTestaments.accountantContact}
               onChange={(e) => handleFieldUpdate('accountantContact', e.target.value)}
-              placeholder="Phone or email"
+              placeholder={t('willTestaments.accountantContactPlaceholder')}
             />
           </div>
         </Card>
 
         <Card
-          title="Estate Contacts"
+          title={t('willTestaments.estateContacts')}
           action={
             <Button onClick={() => contactForm.openModal()}>
-              Add Contact
+              {t('willTestaments.addContact')}
             </Button>
           }
         >
           <p className="text-sm text-gray-600 mb-4">
-            Beneficiaries, trustees, or other estate-related contacts. You can link existing contacts or create new ones.
+            {t('willTestaments.beneficiariesDescription')}
           </p>
           {estateContacts.length === 0 ? (
             <EmptyState
-              title="No estate contacts yet"
-              description="Add contacts related to your estate plan"
-              actionLabel="Add Contact"
+              title={t('willTestaments.noEstateContactsYet')}
+              description={t('willTestaments.estateContactsDescription')}
+              actionLabel={t('willTestaments.addContact')}
               onAction={() => contactForm.openModal()}
             />
           ) : (
@@ -307,7 +309,7 @@ export default function WillTestaments() {
                       <h3 className="font-semibold text-gray-900">{contact.name}</h3>
                       {contact.type === 'existing' && (
                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                          Linked
+                          {t('willTestaments.linked')}
                         </span>
                       )}
                     </div>
@@ -339,21 +341,21 @@ export default function WillTestaments() {
         </Card>
 
         <Card
-          title="Assets & Distribution"
+          title={t('willTestaments.assetsDistribution')}
           action={
             <Button onClick={() => assetForm.openModal()}>
-              Add Asset
+              {t('willTestaments.addAsset')}
             </Button>
           }
         >
           <p className="text-sm text-gray-600 mb-4">
-            Track your assets and how they should be distributed. Choose between simple text descriptions or detailed beneficiary breakdowns.
+            {t('willTestaments.assetsDescriptionFull')}
           </p>
           {assets.length === 0 ? (
             <EmptyState
-              title="No assets added yet"
-              description="Add assets and specify how they should be distributed"
-              actionLabel="Add Asset"
+              title={t('willTestaments.noAssetsYet')}
+              description={t('willTestaments.assetsDescription')}
+              actionLabel={t('willTestaments.addAsset')}
               onAction={() => assetForm.openModal()}
             />
           ) : (
@@ -372,7 +374,7 @@ export default function WillTestaments() {
                             ? 'bg-blue-100 text-blue-700'
                             : 'bg-purple-100 text-purple-700'
                         }`}>
-                          {asset.inputMode === 'simple' ? 'Simple' : 'Structured'}
+                          {asset.inputMode === 'simple' ? t('willTestaments.simple') : t('willTestaments.structured')}
                         </span>
                       </div>
                       {asset.location && (
@@ -406,7 +408,7 @@ export default function WillTestaments() {
                     <div className="mt-2">
                       <p className="text-xs font-medium text-gray-600 mb-2">Beneficiaries:</p>
                       {asset.beneficiaries.length === 0 ? (
-                        <p className="text-sm text-gray-500 italic">No beneficiaries added</p>
+                        <p className="text-sm text-gray-500 italic">{t('willTestaments.noBeneficiariesAdded')}</p>
                       ) : (
                         <div className="space-y-2">
                           {asset.beneficiaries.map((ben) => (
@@ -439,27 +441,27 @@ export default function WillTestaments() {
           )}
         </Card>
 
-        <Card title="Additional Instructions">
+        <Card title={t('willTestaments.additionalInstructions')}>
           <div className="space-y-4">
             <TextArea
-              label="Funeral Preferences"
+              label={t('willTestaments.funeralPreferences')}
               value={plan.willTestaments.funeralPreferences}
               onChange={(e) => handleFieldUpdate('funeralPreferences', e.target.value)}
-              placeholder="Burial, cremation, service preferences, etc."
+              placeholder={t('willTestaments.funeralPreferencesPlaceholder')}
               rows={4}
             />
             <TextArea
-              label="Special Instructions"
+              label={t('willTestaments.specialInstructions')}
               value={plan.willTestaments.specialInstructions}
               onChange={(e) => handleFieldUpdate('specialInstructions', e.target.value)}
-              placeholder="Pet care, specific wishes, memorial preferences, etc."
+              placeholder={t('willTestaments.specialInstructionsPlaceholder')}
               rows={4}
             />
             <TextArea
-              label="General Notes"
+              label={t('willTestaments.generalNotes')}
               value={plan.willTestaments.generalNotes}
               onChange={(e) => handleFieldUpdate('generalNotes', e.target.value)}
-              placeholder="Any other will and testament information"
+              placeholder={t('willTestaments.generalNotesPlaceholder')}
               rows={4}
             />
           </div>
@@ -468,24 +470,24 @@ export default function WillTestaments() {
         <Modal
           isOpen={contactForm.isModalOpen}
           onClose={contactForm.closeModal}
-          title={contactForm.editingItem ? 'Edit Estate Contact' : 'Add Estate Contact'}
+          title={contactForm.editingItem ? t('willTestaments.editContact') : t('willTestaments.addContact')}
           footer={
             <>
               <Button variant="secondary" onClick={contactForm.closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleSaveContact}
                 disabled={contactForm.formData.type === 'existing' ? !contactForm.formData.existingContactId : !contactForm.formData.name?.trim()}
               >
-                Save
+                {t('common.save')}
               </Button>
             </>
           }
         >
           <div className="space-y-4">
             <Select
-              label="Contact Type"
+              label={t('willTestaments.contactType')}
               value={contactForm.formData.type || 'new'}
               onChange={(e) => contactForm.updateField('type', e.target.value as EstateContactType)}
               options={contactTypeOptions}
@@ -494,7 +496,7 @@ export default function WillTestaments() {
             {contactForm.formData.type === 'existing' ? (
               <>
                 <Select
-                  label="Select Existing Contact"
+                  label={t('willTestaments.selectExistingContact')}
                   value={contactForm.formData.existingContactId || ''}
                   onChange={(e) => {
                     const selectedContact = plan.contacts.find(c => c.id === e.target.value);
@@ -510,57 +512,57 @@ export default function WillTestaments() {
                     }
                   }}
                   options={[
-                    { value: '', label: 'Select a contact...' },
+                    { value: '', label: t('willTestaments.selectContact') },
                     ...plan.contacts.map(c => ({ value: c.id, label: `${c.name} (${c.relationship})` })),
                   ]}
                 />
                 <Input
-                  label="Address (Estate-specific)"
+                  label={t('willTestaments.addressEstateSpecific')}
                   value={contactForm.formData.address || ''}
                   onChange={(e) => contactForm.updateField('address', e.target.value)}
-                  placeholder="Mailing address for estate matters"
+                  placeholder={t('willTestaments.addressEstatePlaceholder')}
                 />
               </>
             ) : (
               <>
                 <Input
-                  label="Name"
+                  label={t('willTestaments.name')}
                   value={contactForm.formData.name || ''}
                   onChange={(e) => contactForm.updateField('name', e.target.value)}
                   required
                 />
                 <Input
-                  label="Relationship"
+                  label={t('willTestaments.relationship')}
                   value={contactForm.formData.relationship || ''}
                   onChange={(e) => contactForm.updateField('relationship', e.target.value)}
-                  placeholder="e.g., Beneficiary, Trustee"
+                  placeholder={t('contacts.relationshipPlaceholder')}
                 />
                 <Input
-                  label="Phone"
+                  label={t('willTestaments.phone')}
                   type="tel"
                   value={contactForm.formData.phone || ''}
                   onChange={(e) => contactForm.updateField('phone', e.target.value)}
                 />
                 <Input
-                  label="Email"
+                  label={t('willTestaments.email')}
                   type="email"
                   value={contactForm.formData.email || ''}
                   onChange={(e) => contactForm.updateField('email', e.target.value)}
                 />
                 <Input
-                  label="Address"
+                  label={t('willTestaments.address')}
                   value={contactForm.formData.address || ''}
                   onChange={(e) => contactForm.updateField('address', e.target.value)}
-                  placeholder="Mailing address"
+                  placeholder={t('willTestaments.addressPlaceholder')}
                 />
               </>
             )}
 
             <TextArea
-              label="Notes"
+              label={t('willTestaments.notes')}
               value={contactForm.formData.notes || ''}
               onChange={(e) => contactForm.updateField('notes', e.target.value)}
-              placeholder="Additional information..."
+              placeholder={t('willTestaments.notesPlaceholder')}
             />
           </div>
         </Modal>
@@ -568,45 +570,45 @@ export default function WillTestaments() {
         <Modal
           isOpen={assetForm.isModalOpen}
           onClose={assetForm.closeModal}
-          title={assetForm.editingItem ? 'Edit Asset' : 'Add Asset'}
+          title={assetForm.editingItem ? t('willTestaments.editAsset') : t('willTestaments.addAsset')}
           footer={
             <>
               <Button variant="secondary" onClick={assetForm.closeModal}>
-                Cancel
+                {t('common.cancel')}
               </Button>
-              <Button onClick={handleSaveAsset} disabled={!assetForm.formData.name?.trim()}>Save</Button>
+              <Button onClick={handleSaveAsset} disabled={!assetForm.formData.name?.trim()}>{t('common.save')}</Button>
             </>
           }
         >
           <div className="space-y-4">
             <Input
-              label="Asset Name"
+              label={t('willTestaments.assetName')}
               value={assetForm.formData.name || ''}
               onChange={(e) => assetForm.updateField('name', e.target.value)}
-              placeholder="e.g., Family Home, Investment Portfolio"
+              placeholder={t('willTestaments.assetTypePlaceholder')}
               required
             />
             <Input
-              label="Type"
+              label={t('willTestaments.assetType')}
               value={assetForm.formData.type || ''}
               onChange={(e) => assetForm.updateField('type', e.target.value)}
-              placeholder="e.g., Real Estate, Financial, Personal Property"
+              placeholder={t('willTestaments.assetTypePlaceholder')}
             />
             <Input
-              label="Location"
+              label={t('willTestaments.location')}
               value={assetForm.formData.location || ''}
               onChange={(e) => assetForm.updateField('location', e.target.value)}
-              placeholder="Physical or account location"
+              placeholder={t('willTestaments.locationPlaceholder')}
             />
             <Input
-              label="Estimated Value"
+              label={t('willTestaments.estimatedValue')}
               value={assetForm.formData.estimatedValue || ''}
               onChange={(e) => assetForm.updateField('estimatedValue', e.target.value)}
               placeholder="e.g., $500,000"
             />
 
             <Select
-              label="Distribution Method"
+              label={t('willTestaments.distributionMethod')}
               value={assetForm.formData.inputMode || 'simple'}
               onChange={(e) => assetForm.updateField('inputMode', e.target.value as AssetInputMode)}
               options={assetModeOptions}
@@ -614,16 +616,16 @@ export default function WillTestaments() {
 
             {assetForm.formData.inputMode === 'simple' ? (
               <TextArea
-                label="Distribution Instructions"
+                label={t('willTestaments.distributionInstructions')}
                 value={assetForm.formData.simpleDistribution || ''}
                 onChange={(e) => assetForm.updateField('simpleDistribution', e.target.value)}
-                placeholder="Describe how this asset should be distributed..."
+                placeholder={t('willTestaments.distributionInstructionsPlaceholder')}
                 rows={4}
               />
             ) : (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">Beneficiaries</label>
+                  <label className="text-sm font-medium text-gray-700">{t('willTestaments.beneficiaries')}</label>
                   <Button
                     onClick={() => {
                       setBeneficiaryForm({ contactId: '', percentage: undefined, specificItems: '', notes: '' });
@@ -632,11 +634,11 @@ export default function WillTestaments() {
                     }}
                     className="text-sm py-1 px-3"
                   >
-                    Add Beneficiary
+                    {t('willTestaments.addBeneficiary')}
                   </Button>
                 </div>
                 {(assetForm.formData.beneficiaries || []).length === 0 ? (
-                  <p className="text-sm text-gray-500 italic">No beneficiaries added</p>
+                  <p className="text-sm text-gray-500 italic">{t('willTestaments.noBeneficiariesAdded')}</p>
                 ) : (
                   <div className="space-y-2">
                     {(assetForm.formData.beneficiaries || []).map((ben: any, index: number) => (
@@ -672,10 +674,10 @@ export default function WillTestaments() {
             )}
 
             <TextArea
-              label="Additional Notes"
+              label={t('willTestaments.additionalNotes')}
               value={assetForm.formData.notes || ''}
               onChange={(e) => assetForm.updateField('notes', e.target.value)}
-              placeholder="Any special instructions or details..."
+              placeholder={t('willTestaments.additionalNotesPlaceholder')}
               rows={3}
             />
           </div>
@@ -687,44 +689,44 @@ export default function WillTestaments() {
             setShowBeneficiaryModal(false);
             setEditingBeneficiaryIndex(null);
           }}
-          title={editingBeneficiaryIndex !== null ? 'Edit Beneficiary' : 'Add Beneficiary'}
+          title={editingBeneficiaryIndex !== null ? t('willTestaments.editBeneficiary') : t('willTestaments.addBeneficiary')}
           footer={
             <>
               <Button variant="secondary" onClick={() => setShowBeneficiaryModal(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
-              <Button onClick={handleAddBeneficiary}>Save</Button>
+              <Button onClick={handleAddBeneficiary}>{t('common.save')}</Button>
             </>
           }
         >
           <div className="space-y-4">
             <Select
-              label="Contact"
+              label={t('willTestaments.selectContactBeneficiary')}
               value={beneficiaryForm.contactId || ''}
               onChange={(e) => setBeneficiaryForm({ ...beneficiaryForm, contactId: e.target.value })}
               options={[
-                { value: '', label: 'Select a contact...' },
+                { value: '', label: t('willTestaments.selectContact') },
                 ...allContactsForSelection,
               ]}
             />
             <Input
-              label="Percentage (optional)"
+              label={t('willTestaments.percentage')}
               type="number"
               value={beneficiaryForm.percentage || ''}
               onChange={(e) => setBeneficiaryForm({ ...beneficiaryForm, percentage: parseFloat(e.target.value) || undefined })}
               placeholder="e.g., 50"
             />
             <Input
-              label="Specific Items (optional)"
+              label={t('willTestaments.specificItems')}
               value={beneficiaryForm.specificItems || ''}
               onChange={(e) => setBeneficiaryForm({ ...beneficiaryForm, specificItems: e.target.value })}
-              placeholder="e.g., Jewelry, Artwork"
+              placeholder={t('willTestaments.specificItemsPlaceholder')}
             />
             <TextArea
-              label="Notes"
+              label={t('willTestaments.beneficiaryNotes')}
               value={beneficiaryForm.notes || ''}
               onChange={(e) => setBeneficiaryForm({ ...beneficiaryForm, notes: e.target.value })}
-              placeholder="Additional details..."
+              placeholder={t('willTestaments.beneficiaryNotesPlaceholder')}
               rows={3}
             />
           </div>

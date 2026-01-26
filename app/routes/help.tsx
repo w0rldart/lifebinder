@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { AppLayout } from '~/components/AppLayout';
 import { Card } from '~/components/Card';
+import { useLanguage } from '~/lib/language-context';
 import { Search, ChevronDown } from 'lucide-react';
 
 interface Section {
@@ -11,6 +12,7 @@ interface Section {
 }
 
 export default function Help() {
+  const { t } = useLanguage();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['what-is']));
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -27,59 +29,59 @@ export default function Help() {
   const sections: Section[] = [
     {
       id: 'what-is',
-      title: 'What is Life Binder?',
+      title: t('help.sections.whatIs.title'),
       content: (
         <div className="space-y-4">
           <p className="text-gray-700">
-            Life Binder is a secure, client-side application designed to help you organize and document critical information for end-of-life planning. It ensures your loved ones have access to everything they need when the time comes.
+            {t('help.sections.whatIs.description')}
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800 font-medium mb-2">Why Life Binder?</p>
+            <p className="text-sm text-blue-800 font-medium mb-2">{t('help.sections.whatIs.whyTitle')}</p>
             <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Organize passwords, accounts, and important documents in one secure place</li>
-              <li>• Create a clear notification plan so the right people are informed</li>
-              <li>• Document estate details, assets, and beneficiaries</li>
-              <li>• Prepare emergency information for your family</li>
-              <li>• Export everything to encrypted files or PDFs for safekeeping</li>
+              <li>• {t('help.sections.whatIs.why1')}</li>
+              <li>• {t('help.sections.whatIs.why2')}</li>
+              <li>• {t('help.sections.whatIs.why3')}</li>
+              <li>• {t('help.sections.whatIs.why4')}</li>
+              <li>• {t('help.sections.whatIs.why5')}</li>
             </ul>
           </div>
           <p className="text-gray-700">
-            All your data is stored locally in your browser or can be encrypted and exported. Nothing is sent to external servers unless you choose to back it up.
+            {t('help.sections.whatIs.closing')}
           </p>
         </div>
       ),
     },
     {
       id: 'getting-started',
-      title: 'Getting Started',
+      title: t('help.sections.gettingStarted.title'),
       content: (
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Creating Your First Plan</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.gettingStarted.creatingPlanTitle')}</h3>
             <ol className="text-gray-700 space-y-2 list-decimal list-inside">
-              <li>From the welcome screen, choose to create a new plan or explore with demo data</li>
-              <li>If using demo data, review the examples to understand each section</li>
-              <li>Replace demo data with your real information when ready</li>
-              <li>Use the "Reset Plan" button to start fresh if needed</li>
+              <li>{t('help.sections.gettingStarted.creatingPlan1')}</li>
+              <li>{t('help.sections.gettingStarted.creatingPlan2')}</li>
+              <li>{t('help.sections.gettingStarted.creatingPlan3')}</li>
+              <li>{t('help.sections.gettingStarted.creatingPlan4')}</li>
             </ol>
           </div>
 
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-800 font-medium mb-2">Security First</p>
+            <p className="text-sm text-yellow-800 font-medium mb-2">{t('help.sections.gettingStarted.securityTitle')}</p>
             <p className="text-sm text-yellow-700">
-              We strongly recommend adding encryption immediately after creating your plan. Go to Settings → Add Encryption to protect your data with a passphrase. Store this passphrase securely - it cannot be recovered if lost.
+              {t('help.sections.gettingStarted.securityText')}
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Understanding Auto-Lock</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.gettingStarted.autoLockTitle')}</h3>
             <p className="text-gray-700 mb-2">
-              Life Binder automatically locks after a period of inactivity (default: 30 minutes). You can adjust this in Settings. When locked:
+              {t('help.sections.gettingStarted.autoLockDescription')}
             </p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Encrypted plans require your passphrase to unlock</li>
-              <li>Unencrypted plans unlock instantly</li>
-              <li>You'll see a warning before auto-lock occurs</li>
+              <li>{t('help.sections.gettingStarted.autoLock1')}</li>
+              <li>{t('help.sections.gettingStarted.autoLock2')}</li>
+              <li>{t('help.sections.gettingStarted.autoLock3')}</li>
             </ul>
           </div>
         </div>
@@ -87,60 +89,52 @@ export default function Help() {
     },
     {
       id: 'dashboard',
-      title: 'Dashboard Module',
+      title: t('help.sections.dashboard.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            The Dashboard provides an at-a-glance view of your Life Binder's completeness and guides you on what to fill out next.
-          </p>
+          <p className="text-gray-700">{t('help.sections.dashboard.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Completeness Tracking</h3>
-            <p className="text-gray-700 mb-2">Each section shows a percentage based on:</p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.dashboard.completenessTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.dashboard.completenessDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li><strong>Contacts:</strong> At least 3 contacts added</li>
-              <li><strong>Notification Plan:</strong> Primary and secondary contacts assigned</li>
-              <li><strong>Access:</strong> Password managers and email accounts documented</li>
-              <li><strong>Accounts:</strong> At least 3 accounts added</li>
-              <li><strong>Documents:</strong> At least 3 documents added</li>
-              <li><strong>Estate Planning:</strong> Executor and attorney information provided</li>
-              <li><strong>Emergency:</strong> Meeting locations and emergency contacts added</li>
+              <li><strong>{t('help.sections.dashboard.completeness1')}</strong></li>
+              <li><strong>{t('help.sections.dashboard.completeness2')}</strong></li>
+              <li><strong>{t('help.sections.dashboard.completeness3')}</strong></li>
+              <li><strong>{t('help.sections.dashboard.completeness4')}</strong></li>
+              <li><strong>{t('help.sections.dashboard.completeness5')}</strong></li>
+              <li><strong>{t('help.sections.dashboard.completeness6')}</strong></li>
+              <li><strong>{t('help.sections.dashboard.completeness7')}</strong></li>
             </ul>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-sm text-green-800 font-medium mb-1">Quick Tip</p>
-            <p className="text-sm text-green-700">
-              Don't worry about achieving 100% completion. Focus on the sections most relevant to your situation. The dashboard helps identify gaps but isn't meant to be a checklist.
-            </p>
+            <p className="text-sm text-green-800 font-medium mb-1">{t('help.sections.dashboard.quickTipTitle')}</p>
+            <p className="text-sm text-green-700">{t('help.sections.dashboard.quickTipText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'contacts',
-      title: 'Contacts Module',
+      title: t('help.sections.contacts.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Contacts are the people who matter most in your life - those who should be notified and who might need access to your information.
-          </p>
+          <p className="text-gray-700">{t('help.sections.contacts.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">What to Include</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.contacts.includeTitle')}</h3>
             <ul className="text-gray-700 space-y-2 list-disc list-inside ml-4">
-              <li><strong>Name and relationship:</strong> Make it clear who this person is</li>
-              <li><strong>Multiple contact methods:</strong> Phone and email when possible</li>
-              <li><strong>Physical address:</strong> Especially for legal or estate matters</li>
-              <li><strong>Notes:</strong> Any context your other contacts might need</li>
+              <li><strong>{t('help.sections.contacts.include1')}</strong></li>
+              <li><strong>{t('help.sections.contacts.include2')}</strong></li>
+              <li><strong>{t('help.sections.contacts.include3')}</strong></li>
+              <li><strong>{t('help.sections.contacts.include4')}</strong></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Notification Order</h3>
-            <p className="text-gray-700 mb-2">
-              After adding contacts, assign them to notification tiers in the Access module. This creates a clear chain of communication:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.contacts.notificationTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.contacts.notificationDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li><strong>Primary:</strong> First person to be notified (executor, spouse, etc.)</li>
-              <li><strong>Secondary:</strong> Notified if primary is unavailable</li>
-              <li><strong>Tertiary:</strong> Additional backup contacts</li>
+              <li><strong>{t('help.sections.contacts.notification1')}</strong></li>
+              <li><strong>{t('help.sections.contacts.notification2')}</strong></li>
+              <li><strong>{t('help.sections.contacts.notification3')}</strong></li>
             </ul>
           </div>
         </div>
@@ -148,315 +142,265 @@ export default function Help() {
     },
     {
       id: 'access',
-      title: 'Access Module',
+      title: t('help.sections.access.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            The Access module is the heart of Life Binder - it documents how to access your digital life and who should be notified when the time comes.
-          </p>
+          <p className="text-gray-700">{t('help.sections.access.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Password Managers</h3>
-            <p className="text-gray-700 mb-2">
-              Document your password manager details (LastPass, 1Password, Bitwarden, etc.):
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.access.passwordManagersTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.access.passwordManagersDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Master password location or recovery instructions</li>
-              <li>Two-factor authentication backup codes</li>
-              <li>Recovery email or security questions</li>
+              <li>{t('help.sections.access.passwordManagers1')}</li>
+              <li>{t('help.sections.access.passwordManagers2')}</li>
+              <li>{t('help.sections.access.passwordManagers3')}</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Email Accounts</h3>
-            <p className="text-gray-700 mb-2">
-              Primary email accounts are gateways to everything else. Document:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.access.emailAccountsTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.access.emailAccountsDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Email address and provider</li>
-              <li>Password or recovery method</li>
-              <li>Two-factor authentication details</li>
-              <li>Recovery email or phone number</li>
+              <li>{t('help.sections.access.emailAccounts1')}</li>
+              <li>{t('help.sections.access.emailAccounts2')}</li>
+              <li>{t('help.sections.access.emailAccounts3')}</li>
+              <li>{t('help.sections.access.emailAccounts4')}</li>
             </ul>
           </div>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-800 font-medium mb-1">Security Note</p>
-            <p className="text-sm text-yellow-700">
-              This is highly sensitive information. Always enable encryption and use a strong passphrase. Consider storing master passwords separately and referencing their location here instead.
-            </p>
+            <p className="text-sm text-yellow-800 font-medium mb-1">{t('help.sections.access.securityNoteTitle')}</p>
+            <p className="text-sm text-yellow-700">{t('help.sections.access.securityNoteText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'accounts',
-      title: 'Accounts Module',
+      title: t('help.sections.accounts.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Track subscriptions, services, and online accounts that need to be managed or canceled.
-          </p>
+          <p className="text-gray-700">{t('help.sections.accounts.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Account Types to Include</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.accounts.typesTitle')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <p className="font-medium text-gray-900">Subscriptions</p>
+                <p className="font-medium text-gray-900">{t('help.sections.accounts.subscriptionsTitle')}</p>
                 <ul className="text-sm text-gray-600 list-disc list-inside ml-2">
-                  <li>Streaming services</li>
-                  <li>Software licenses</li>
-                  <li>Membership sites</li>
-                  <li>Recurring donations</li>
+                  <li>{t('help.sections.accounts.subscriptions1')}</li>
+                  <li>{t('help.sections.accounts.subscriptions2')}</li>
+                  <li>{t('help.sections.accounts.subscriptions3')}</li>
+                  <li>{t('help.sections.accounts.subscriptions4')}</li>
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Cloud Services</p>
+                <p className="font-medium text-gray-900">{t('help.sections.accounts.cloudTitle')}</p>
                 <ul className="text-sm text-gray-600 list-disc list-inside ml-2">
-                  <li>Cloud storage (Google Drive, Dropbox)</li>
-                  <li>Photo services</li>
-                  <li>Backup services</li>
-                  <li>Development platforms</li>
+                  <li>{t('help.sections.accounts.cloud1')}</li>
+                  <li>{t('help.sections.accounts.cloud2')}</li>
+                  <li>{t('help.sections.accounts.cloud3')}</li>
+                  <li>{t('help.sections.accounts.cloud4')}</li>
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Domain & Hosting</p>
+                <p className="font-medium text-gray-900">{t('help.sections.accounts.domainTitle')}</p>
                 <ul className="text-sm text-gray-600 list-disc list-inside ml-2">
-                  <li>Domain registrars</li>
-                  <li>Web hosting</li>
-                  <li>Email hosting</li>
-                  <li>CDN services</li>
+                  <li>{t('help.sections.accounts.domain1')}</li>
+                  <li>{t('help.sections.accounts.domain2')}</li>
+                  <li>{t('help.sections.accounts.domain3')}</li>
+                  <li>{t('help.sections.accounts.domain4')}</li>
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Other</p>
+                <p className="font-medium text-gray-900">{t('help.sections.accounts.otherTitle')}</p>
                 <ul className="text-sm text-gray-600 list-disc list-inside ml-2">
-                  <li>Social media</li>
-                  <li>Gaming accounts</li>
-                  <li>Professional networks</li>
-                  <li>Forums and communities</li>
+                  <li>{t('help.sections.accounts.other1')}</li>
+                  <li>{t('help.sections.accounts.other2')}</li>
+                  <li>{t('help.sections.accounts.other3')}</li>
+                  <li>{t('help.sections.accounts.other4')}</li>
                 </ul>
               </div>
             </div>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-sm text-green-800 font-medium mb-1">Best Practice</p>
-            <p className="text-sm text-green-700">
-              Include account URLs, usernames, and renewal dates. For accounts with ongoing costs, note whether they should be canceled or maintained.
-            </p>
+            <p className="text-sm text-green-800 font-medium mb-1">{t('help.sections.accounts.bestPracticeTitle')}</p>
+            <p className="text-sm text-green-700">{t('help.sections.accounts.bestPracticeText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'documents',
-      title: 'Documents Module',
+      title: t('help.sections.documents.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Track physical and digital documents that your loved ones will need to locate.
-          </p>
+          <p className="text-gray-700">{t('help.sections.documents.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Important Documents</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.documents.importantTitle')}</h3>
             <div className="space-y-2">
               <div>
-                <p className="font-medium text-gray-900">Legal Documents</p>
-                <p className="text-sm text-gray-600">Birth certificate, marriage license, passport, social security card, driver's license</p>
+                <p className="font-medium text-gray-900">{t('help.sections.documents.legalTitle')}</p>
+                <p className="text-sm text-gray-600">{t('help.sections.documents.legalText')}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Financial Documents</p>
-                <p className="text-sm text-gray-600">Tax returns, bank statements, investment accounts, retirement accounts, life insurance policies</p>
+                <p className="font-medium text-gray-900">{t('help.sections.documents.financialTitle')}</p>
+                <p className="text-sm text-gray-600">{t('help.sections.documents.financialText')}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Property Documents</p>
-                <p className="text-sm text-gray-600">Deeds, titles, mortgage papers, rental agreements, vehicle titles</p>
+                <p className="font-medium text-gray-900">{t('help.sections.documents.propertyTitle')}</p>
+                <p className="text-sm text-gray-600">{t('help.sections.documents.propertyText')}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Medical Documents</p>
-                <p className="text-sm text-gray-600">Medical records, prescriptions, advance directives, living will, DNR orders</p>
+                <p className="font-medium text-gray-900">{t('help.sections.documents.medicalTitle')}</p>
+                <p className="text-sm text-gray-600">{t('help.sections.documents.medicalText')}</p>
               </div>
             </div>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Document Locations</h3>
-            <p className="text-gray-700">
-              For each document, specify exactly where it can be found: safe deposit box number and bank, home safe location, filing cabinet drawer, cloud storage path, or attorney's office.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.documents.locationsTitle')}</h3>
+            <p className="text-gray-700">{t('help.sections.documents.locationsText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'estate',
-      title: 'Estate Planning Module',
+      title: t('help.sections.estate.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Document your estate plan, asset distribution wishes, and end-of-life preferences.
-          </p>
+          <p className="text-gray-700">{t('help.sections.estate.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Key Information to Include</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.estate.keyInfoTitle')}</h3>
             <ul className="text-gray-700 space-y-2 list-disc list-inside ml-4">
-              <li><strong>Executor:</strong> The person responsible for carrying out your will</li>
-              <li><strong>Will & Trust Locations:</strong> Where these documents are stored</li>
-              <li><strong>Attorney & Accountant:</strong> Professional contacts for estate matters</li>
-              <li><strong>Assets:</strong> Property, investments, valuables with distribution instructions</li>
-              <li><strong>Beneficiaries:</strong> Who receives what, with percentage allocations</li>
+              <li><strong>{t('help.sections.estate.keyInfo1')}</strong></li>
+              <li><strong>{t('help.sections.estate.keyInfo2')}</strong></li>
+              <li><strong>{t('help.sections.estate.keyInfo3')}</strong></li>
+              <li><strong>{t('help.sections.estate.keyInfo4')}</strong></li>
+              <li><strong>{t('help.sections.estate.keyInfo5')}</strong></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Asset Distribution Options</h3>
-            <p className="text-gray-700 mb-2">
-              For each asset, choose how to document distribution:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.estate.distributionTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.estate.distributionDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li><strong>Simple:</strong> Quick text description (e.g., "Split equally among children")</li>
-              <li><strong>Structured:</strong> Detailed breakdown with percentages per beneficiary</li>
+              <li><strong>{t('help.sections.estate.distribution1')}</strong></li>
+              <li><strong>{t('help.sections.estate.distribution2')}</strong></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Funeral & Memorial Preferences</h3>
-            <p className="text-gray-700">
-              Document your wishes for burial or cremation, service preferences, memorial donations, and any specific instructions for your loved ones.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.estate.funeralTitle')}</h3>
+            <p className="text-gray-700">{t('help.sections.estate.funeralText')}</p>
           </div>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-800 font-medium mb-1">Legal Reminder</p>
-            <p className="text-sm text-yellow-700">
-              Life Binder is not a legal document and doesn't replace a properly executed will. Use it to document and communicate your wishes, but ensure legal documents are filed appropriately.
-            </p>
+            <p className="text-sm text-yellow-800 font-medium mb-1">{t('help.sections.estate.legalReminderTitle')}</p>
+            <p className="text-sm text-yellow-700">{t('help.sections.estate.legalReminderText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'emergency',
-      title: 'Emergency Module',
+      title: t('help.sections.emergency.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Prepare your family for emergencies with meeting locations, evacuation plans, and critical information.
-          </p>
+          <p className="text-gray-700">{t('help.sections.emergency.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Meeting Locations</h3>
-            <p className="text-gray-700 mb-2">
-              Designate places where family should meet if separated during an emergency:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.emergency.meetingLocationsTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.emergency.meetingLocationsDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li><strong>Primary:</strong> Nearby location (e.g., neighbor's house, park)</li>
-              <li><strong>Secondary:</strong> Outside neighborhood (e.g., library, school)</li>
-              <li><strong>Tertiary:</strong> Out-of-area location (e.g., relative's home)</li>
+              <li><strong>{t('help.sections.emergency.meetingLocations1')}</strong></li>
+              <li><strong>{t('help.sections.emergency.meetingLocations2')}</strong></li>
+              <li><strong>{t('help.sections.emergency.meetingLocations3')}</strong></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Utility Shutoffs</h3>
-            <p className="text-gray-700">
-              Document how to shut off gas, water, and electricity in case of emergency. Include valve locations, required tools, and any special instructions.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.emergency.utilityShutoffsTitle')}</h3>
+            <p className="text-gray-700">{t('help.sections.emergency.utilityShutoffsText')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Grab List</h3>
-            <p className="text-gray-700 mb-2">
-              Items to grab if you need to evacuate quickly. Assign priorities (1 = highest):
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.emergency.grabListTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.emergency.grabListDescription')}</p>
             <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside ml-4">
-              <li>Important documents and IDs</li>
-              <li>Medications and medical supplies</li>
-              <li>Cash and credit cards</li>
-              <li>Phone chargers and portable batteries</li>
-              <li>Photos and irreplaceable items</li>
-              <li>Pet supplies and carriers</li>
+              <li>{t('help.sections.emergency.grabList1')}</li>
+              <li>{t('help.sections.emergency.grabList2')}</li>
+              <li>{t('help.sections.emergency.grabList3')}</li>
+              <li>{t('help.sections.emergency.grabList4')}</li>
+              <li>{t('help.sections.emergency.grabList5')}</li>
+              <li>{t('help.sections.emergency.grabList6')}</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Emergency Contacts</h3>
-            <p className="text-gray-700">
-              List local emergency contacts beyond 911: doctors, veterinarians, insurance agents, utility companies, and neighbors who can help.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.emergency.emergencyContactsTitle')}</h3>
+            <p className="text-gray-700">{t('help.sections.emergency.emergencyContactsText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'export',
-      title: 'Export Module',
+      title: t('help.sections.exportModule.title'),
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Export your Life Binder as a PDF or encrypted backup file to store securely or share with trusted contacts.
-          </p>
+          <p className="text-gray-700">{t('help.sections.exportModule.description')}</p>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">PDF Export</h3>
-            <p className="text-gray-700 mb-2">
-              Creates a comprehensive PDF document with all your information formatted for easy reading. Perfect for:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.exportModule.pdfTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.exportModule.pdfDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Printing and storing in a safe location</li>
-              <li>Sharing with your executor or family</li>
-              <li>Keeping an offline backup</li>
+              <li>{t('help.sections.exportModule.pdf1')}</li>
+              <li>{t('help.sections.exportModule.pdf2')}</li>
+              <li>{t('help.sections.exportModule.pdf3')}</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Encrypted JSON Export</h3>
-            <p className="text-gray-700 mb-2">
-              Exports your entire plan as an encrypted JSON file. This is your digital backup:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.exportModule.encryptedTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.exportModule.encryptedDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Can be imported back into Life Binder later</li>
-              <li>Encrypted with your passphrase (if encryption is enabled)</li>
-              <li>Includes all data and settings</li>
-              <li>Store in cloud storage or external drive</li>
+              <li>{t('help.sections.exportModule.encrypted1')}</li>
+              <li>{t('help.sections.exportModule.encrypted2')}</li>
+              <li>{t('help.sections.exportModule.encrypted3')}</li>
+              <li>{t('help.sections.exportModule.encrypted4')}</li>
             </ul>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-sm text-green-800 font-medium mb-1">Backup Strategy</p>
-            <p className="text-sm text-green-700">
-              Export regularly and store backups in multiple locations: one with your executor, one in a safe deposit box, and one in secure cloud storage. Update whenever you make significant changes.
-            </p>
+            <p className="text-sm text-green-800 font-medium mb-1">{t('help.sections.exportModule.backupStrategyTitle')}</p>
+            <p className="text-sm text-green-700">{t('help.sections.exportModule.backupStrategyText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'security',
-      title: 'Security & Privacy',
+      title: t('help.sections.security.title'),
       content: (
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">How Your Data is Protected</h3>
-            <p className="text-gray-700 mb-2">
-              Life Binder is designed with privacy and security as top priorities:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.security.protectedTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.security.protectedDescription')}</p>
             <ul className="text-gray-700 space-y-2 list-disc list-inside ml-4">
-              <li><strong>Client-Side Storage:</strong> All data is stored locally in your browser (unless you choose Supabase)</li>
-              <li><strong>No Cloud Sync:</strong> Nothing is automatically uploaded to external servers</li>
-              <li><strong>Encryption:</strong> Optional AES-256 encryption with your chosen passphrase</li>
-              <li><strong>Auto-Lock:</strong> Automatically locks after inactivity to prevent unauthorized access</li>
+              <li><strong>{t('help.sections.security.protected1')}</strong></li>
+              <li><strong>{t('help.sections.security.protected2')}</strong></li>
+              <li><strong>{t('help.sections.security.protected3')}</strong></li>
+              <li><strong>{t('help.sections.security.protected4')}</strong></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Encryption Explained</h3>
-            <p className="text-gray-700 mb-2">
-              When you enable encryption:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.security.encryptionTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.security.encryptionDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Your data is encrypted with AES-256 before being stored</li>
-              <li>Only your passphrase can decrypt it</li>
-              <li>Even if someone accesses your browser, they can't read your data</li>
-              <li>Your passphrase is never stored - only you know it</li>
+              <li>{t('help.sections.security.encryption1')}</li>
+              <li>{t('help.sections.security.encryption2')}</li>
+              <li>{t('help.sections.security.encryption3')}</li>
+              <li>{t('help.sections.security.encryption4')}</li>
             </ul>
           </div>
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-sm text-red-800 font-medium mb-2">Critical: Passphrase Recovery</p>
-            <p className="text-sm text-red-700">
-              If you lose your passphrase, your data CANNOT be recovered. There is no "forgot password" option. Write down your passphrase and store it in a secure location your executor can access.
-            </p>
+            <p className="text-sm text-red-800 font-medium mb-2">{t('help.sections.security.passphraseRecoveryTitle')}</p>
+            <p className="text-sm text-red-700">{t('help.sections.security.passphraseRecoveryText')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Sensitivity Levels</h3>
-            <p className="text-gray-700 mb-2">
-              Some modules (like Estate Planning and Access) allow you to mark data as "High Sensitivity":
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.security.sensitivityTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.security.sensitivityDescription')}</p>
             <ul className="text-gray-700 space-y-1 list-disc list-inside ml-4">
-              <li>Visual warning reminders about the sensitive nature</li>
-              <li>Helps you remember to be extra careful with this information</li>
-              <li>Consider additional security measures for high-sensitivity data</li>
+              <li>{t('help.sections.security.sensitivity1')}</li>
+              <li>{t('help.sections.security.sensitivity2')}</li>
+              <li>{t('help.sections.security.sensitivity3')}</li>
             </ul>
           </div>
         </div>
@@ -464,97 +408,75 @@ export default function Help() {
     },
     {
       id: 'best-practices',
-      title: 'Best Practices',
+      title: t('help.sections.bestPractices.title'),
       content: (
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Regular Updates</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.bestPractices.updatesTitle')}</h3>
             <ul className="text-gray-700 space-y-2 list-disc list-inside ml-4">
-              <li><strong>Annually:</strong> Review all information for accuracy</li>
-              <li><strong>After major life events:</strong> Marriage, divorce, birth, death, moving</li>
-              <li><strong>After password changes:</strong> Update access information immediately</li>
-              <li><strong>After new accounts:</strong> Add subscriptions and services as you create them</li>
+              <li><strong>{t('help.sections.bestPractices.updates1')}</strong></li>
+              <li><strong>{t('help.sections.bestPractices.updates2')}</strong></li>
+              <li><strong>{t('help.sections.bestPractices.updates3')}</strong></li>
+              <li><strong>{t('help.sections.bestPractices.updates4')}</strong></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Sharing Guidelines</h3>
-            <p className="text-gray-700 mb-2">
-              Think carefully about who should have access:
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.bestPractices.sharingTitle')}</h3>
+            <p className="text-gray-700 mb-2">{t('help.sections.bestPractices.sharingDescription')}</p>
             <ul className="text-gray-700 space-y-2 list-disc list-inside ml-4">
-              <li><strong>Your Executor:</strong> Should have full access or know where to find your Life Binder</li>
-              <li><strong>Trusted Family:</strong> May need PDF exports of relevant sections</li>
-              <li><strong>Attorney:</strong> Consider sharing estate planning sections</li>
-              <li><strong>Digital Heir:</strong> Someone tech-savvy to handle online accounts</li>
+              <li><strong>{t('help.sections.bestPractices.sharing1')}</strong></li>
+              <li><strong>{t('help.sections.bestPractices.sharing2')}</strong></li>
+              <li><strong>{t('help.sections.bestPractices.sharing3')}</strong></li>
+              <li><strong>{t('help.sections.bestPractices.sharing4')}</strong></li>
             </ul>
           </div>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800 font-medium mb-2">Communication is Key</p>
-            <p className="text-sm text-blue-700">
-              Tell your executor where your Life Binder backup is stored and provide them with your passphrase in a secure manner (sealed envelope, password manager emergency access, etc.).
-            </p>
+            <p className="text-sm text-blue-800 font-medium mb-2">{t('help.sections.bestPractices.communicationTitle')}</p>
+            <p className="text-sm text-blue-700">{t('help.sections.bestPractices.communicationText')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Incremental Approach</h3>
-            <p className="text-gray-700">
-              Don't try to complete everything at once. Start with the most critical information (contacts, notification plan, password manager access) and build from there. Even a partially completed Life Binder is valuable.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.bestPractices.incrementalTitle')}</h3>
+            <p className="text-gray-700">{t('help.sections.bestPractices.incrementalText')}</p>
           </div>
         </div>
       ),
     },
     {
       id: 'faq',
-      title: 'Frequently Asked Questions',
+      title: t('help.sections.faq.title'),
       content: (
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">What happens to my data?</h3>
-            <p className="text-gray-700">
-              Your data stays on your device unless you export it. By default, it's stored in your browser's localStorage. If you choose to use Supabase storage, you control that instance.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.dataQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.dataA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Can I use Life Binder on multiple devices?</h3>
-            <p className="text-gray-700">
-              Life Binder stores data locally per device. To sync across devices, export from one device and import to another, or use cloud storage for your exported backups.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.multipleDevicesQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.multipleDevicesA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Is Life Binder legally binding?</h3>
-            <p className="text-gray-700">
-              No. Life Binder is a personal organizational tool, not a legal document. Always work with an attorney for legally binding wills, trusts, and estate documents.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.legallyBindingQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.legallyBindingA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">What if I clear my browser data?</h3>
-            <p className="text-gray-700">
-              If you clear browser storage, your Life Binder data will be deleted. This is why regular encrypted exports are crucial - they allow you to restore your data.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.clearBrowserQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.clearBrowserA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Should I include actual passwords?</h3>
-            <p className="text-gray-700">
-              For highly sensitive passwords (like your master password), consider storing them separately and referencing their location in Life Binder. For less critical passwords, encryption provides strong protection.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.passwordsQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.passwordsA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">How do I know what percentage complete is "enough"?</h3>
-            <p className="text-gray-700">
-              There's no magic number. Focus on documenting what matters most to your situation. If you live alone, emergency contacts might be more important than estate details. Tailor it to your needs.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.percentageQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.percentageA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Can I customize categories or add custom fields?</h3>
-            <p className="text-gray-700">
-              Currently, Life Binder has fixed categories, but most sections have notes fields for additional information. Use these for custom details that don't fit standard fields.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.customizeQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.customizeA')}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">What's the difference between Contacts and Emergency Contacts?</h3>
-            <p className="text-gray-700">
-              Contacts are people in your life (family, friends, professionals). Emergency Contacts in the Emergency module are specific to disaster scenarios (e.g., neighbors, local services). There may be overlap.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('help.sections.faq.contactsDifferenceQ')}</h3>
+            <p className="text-gray-700">{t('help.sections.faq.contactsDifferenceA')}</p>
           </div>
         </div>
       ),
@@ -580,9 +502,9 @@ export default function Help() {
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Help & Guide</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('help.title')}</h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Everything you need to know about using Life Binder effectively
+            {t('help.description')}
           </p>
         </div>
 
@@ -590,7 +512,7 @@ export default function Help() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search help topics..."
+              placeholder={t('help.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -623,21 +545,21 @@ export default function Help() {
         {filteredSections.length === 0 && (
           <Card>
             <div className="text-center py-8">
-              <p className="text-gray-500">No help topics found matching "{searchQuery}"</p>
+              <p className="text-gray-500">{t('help.noResults', { query: searchQuery })}</p>
               <button
                 onClick={() => setSearchQuery('')}
                 className="mt-2 text-blue-600 hover:text-blue-700 font-medium"
               >
-                Clear search
+                {t('help.clearSearch')}
               </button>
             </div>
           </Card>
         )}
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">Need More Help?</h3>
+          <h3 className="font-semibold text-blue-900 mb-2">{t('help.needMoreHelp')}</h3>
           <p className="text-blue-800 text-sm">
-            Life Binder is designed to be intuitive, but everyone's situation is unique. Take your time exploring each module and don't hesitate to use the notes fields for information that doesn't fit standard categories. Remember: the best Life Binder is one that's started, even if it's not perfect.
+            {t('help.needMoreHelpText')}
           </p>
         </div>
       </div>

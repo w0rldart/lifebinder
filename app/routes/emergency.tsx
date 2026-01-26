@@ -5,6 +5,7 @@ import { Modal } from '~/components/Modal';
 import { Input } from '~/components/Input';
 import { TextArea } from '~/components/TextArea';
 import { useSession } from '~/lib/session-context';
+import { useLanguage } from '~/lib/language-context';
 import { useModalForm } from '~/hooks/useModalForm';
 import { usePlanUpdater } from '~/hooks/usePlanUpdater';
 import type { MeetingLocation, EmergencyContact, GrabListItem } from '~/types';
@@ -12,6 +13,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 
 export default function Emergency() {
   const { plan } = useSession();
+  const { t } = useLanguage();
   const { updatePlan } = usePlanUpdater();
 
   const locationForm = useModalForm<Partial<MeetingLocation>>({ name: '', address: '', notes: '' });
@@ -26,7 +28,7 @@ export default function Emergency() {
       : [...plan.emergency.meetingLocations, { ...locationForm.formData, id: crypto.randomUUID() } as MeetingLocation];
 
     const updatedPlan = { ...plan, emergency: { ...plan.emergency, meetingLocations: updated } };
-    await updatePlan(updatedPlan, locationForm.editingItem ? 'Location updated successfully' : 'Location added successfully');
+    await updatePlan(updatedPlan, locationForm.editingItem ? t('emergency.locationUpdated') : t('emergency.locationAdded'));
     locationForm.closeModal();
   };
 
@@ -38,7 +40,7 @@ export default function Emergency() {
       : [...plan.emergency.emergencyContacts, { ...contactForm.formData, id: crypto.randomUUID() } as EmergencyContact];
 
     const updatedPlan = { ...plan, emergency: { ...plan.emergency, emergencyContacts: updated } };
-    await updatePlan(updatedPlan, contactForm.editingItem ? 'Contact updated successfully' : 'Contact added successfully');
+    await updatePlan(updatedPlan, contactForm.editingItem ? t('emergency.contactUpdated') : t('emergency.contactAdded'));
     contactForm.closeModal();
   };
 
@@ -50,12 +52,12 @@ export default function Emergency() {
       : [...plan.emergency.grabList, { ...grabForm.formData, id: crypto.randomUUID() } as GrabListItem];
 
     const updatedPlan = { ...plan, emergency: { ...plan.emergency, grabList: updated } };
-    await updatePlan(updatedPlan, grabForm.editingItem ? 'Item updated successfully' : 'Item added successfully');
+    await updatePlan(updatedPlan, grabForm.editingItem ? t('emergency.itemUpdated') : t('emergency.itemAdded'));
     grabForm.closeModal();
   };
 
   const handleDelete = async (type: 'location' | 'contact' | 'grab', id: string) => {
-    if (!plan || !confirm('Delete this item?')) return;
+    if (!plan || !confirm(t('emergency.deleteItem'))) return;
 
     const updates: any = { ...plan.emergency };
     if (type === 'location') updates.meetingLocations = plan.emergency.meetingLocations.filter(l => l.id !== id);
@@ -63,14 +65,14 @@ export default function Emergency() {
     if (type === 'grab') updates.grabList = plan.emergency.grabList.filter(g => g.id !== id);
 
     const updatedPlan = { ...plan, emergency: updates };
-    await updatePlan(updatedPlan, 'Item deleted successfully');
+    await updatePlan(updatedPlan, t('emergency.itemDeleted'));
   };
 
   const handleUpdateNotes = async (field: 'utilityShutoffNotes' | 'generalNotes', value: string) => {
     if (!plan) return;
 
     const updatedPlan = { ...plan, emergency: { ...plan.emergency, [field]: value } };
-    await updatePlan(updatedPlan, 'Notes updated successfully');
+    await updatePlan(updatedPlan, t('emergency.notesUpdated'));
   };
 
   return (
@@ -78,15 +80,15 @@ export default function Emergency() {
       {plan && (
       <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Emergency Information</h1>
-          <p className="text-sm sm:text-base text-gray-600">Plan for crisis situations and emergencies</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('emergency.title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{t('emergency.description')}</p>
         </div>
 
-        <Card title="Meeting Locations" action={<Button onClick={() => locationForm.openModal()}>Add</Button>}>
-          <p className="text-sm text-gray-600 mb-4">Where should family members gather in an emergency?</p>
+        <Card title={t('emergency.meetingLocations')} action={<Button onClick={() => locationForm.openModal()}>{t('common.add')}</Button>}>
+          <p className="text-sm text-gray-600 mb-4">{t('emergency.meetingLocationsDescription')}</p>
           <div className="space-y-3">
             {plan.emergency.meetingLocations.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No meeting locations added</p>
+              <p className="text-gray-500 text-sm italic">{t('emergency.noMeetingLocations')}</p>
             ) : (
               plan.emergency.meetingLocations.map(loc => (
                 <div key={loc.id} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
@@ -109,22 +111,22 @@ export default function Emergency() {
           </div>
         </Card>
 
-        <Card title="Utility Shutoffs">
+        <Card title={t('emergency.utilityShutoffs')}>
           <TextArea
-            label="Shutoff Locations and Instructions"
+            label={t('emergency.fields.shutoffLabel')}
             value={plan.emergency.utilityShutoffNotes}
             onChange={(e) => handleUpdateNotes('utilityShutoffNotes', e.target.value)}
-            placeholder="Water main: Under front porch, turn clockwise&#10;Gas: Side of house near meter, needs wrench&#10;Electric: Breaker box in garage"
+            placeholder={t('emergency.fields.shutoffPlaceholder')}
             rows={6}
-            helpText="Document where and how to shut off utilities in an emergency"
+            helpText={t('emergency.fields.shutoffHelpText')}
           />
         </Card>
 
-        <Card title="Emergency Contacts" action={<Button onClick={() => contactForm.openModal()}>Add</Button>}>
-          <p className="text-sm text-gray-600 mb-4">911 services, poison control, nearest hospital, etc.</p>
+        <Card title={t('emergency.emergencyContacts')} action={<Button onClick={() => contactForm.openModal()}>{t('common.add')}</Button>}>
+          <p className="text-sm text-gray-600 mb-4">{t('emergency.emergencyContactsDescription')}</p>
           <div className="space-y-3">
             {plan.emergency.emergencyContacts.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No emergency contacts added</p>
+              <p className="text-gray-500 text-sm italic">{t('emergency.noEmergencyContacts')}</p>
             ) : (
               plan.emergency.emergencyContacts.map(contact => (
                 <div key={contact.id} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
@@ -148,11 +150,11 @@ export default function Emergency() {
           </div>
         </Card>
 
-        <Card title="Grab List" action={<Button onClick={() => grabForm.openModal()}>Add</Button>}>
-          <p className="text-sm text-gray-600 mb-4">Important items to take in an evacuation</p>
+        <Card title={t('emergency.grabList')} action={<Button onClick={() => grabForm.openModal()}>{t('common.add')}</Button>}>
+          <p className="text-sm text-gray-600 mb-4">{t('emergency.grabListDescription')}</p>
           <div className="space-y-3">
             {plan.emergency.grabList.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">No items added to grab list</p>
+              <p className="text-gray-500 text-sm italic">{t('emergency.noGrabListItems')}</p>
             ) : (
               plan.emergency.grabList.sort((a, b) => (a.priority || 99) - (b.priority || 99)).map(item => (
                 <div key={item.id} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
@@ -177,37 +179,37 @@ export default function Emergency() {
           </div>
         </Card>
 
-        <Card title="General Emergency Notes">
+        <Card title={t('emergency.generalEmergencyNotes')}>
           <TextArea
             value={plan.emergency.generalNotes}
             onChange={(e) => handleUpdateNotes('generalNotes', e.target.value)}
-            placeholder="Any other emergency information, procedures, or important details..."
+            placeholder={t('emergency.fields.generalNotesPlaceholder')}
             rows={6}
           />
         </Card>
 
-        <Modal isOpen={locationForm.isModalOpen} onClose={locationForm.closeModal} title={locationForm.editingItem ? 'Edit Location' : 'Add Meeting Location'} footer={<><Button variant="secondary" onClick={locationForm.closeModal}>Cancel</Button><Button onClick={handleSaveLocation} disabled={!locationForm.formData.name?.trim()}>Save</Button></>}>
+        <Modal isOpen={locationForm.isModalOpen} onClose={locationForm.closeModal} title={locationForm.editingItem ? t('emergency.editLocation') : t('emergency.addMeetingLocation')} footer={<><Button variant="secondary" onClick={locationForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveLocation} disabled={!locationForm.formData.name?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Location Name" value={locationForm.formData.name || ''} onChange={(e) => locationForm.updateField('name', e.target.value)} placeholder="e.g., City Park, Friend's House" required />
-            <Input label="Address" value={locationForm.formData.address || ''} onChange={(e) => locationForm.updateField('address', e.target.value)} placeholder="Full address" />
-            <TextArea label="Notes" value={locationForm.formData.notes || ''} onChange={(e) => locationForm.updateField('notes', e.target.value)} placeholder="Special instructions, landmarks, etc." />
+            <Input label={t('emergency.fields.locationName')} value={locationForm.formData.name || ''} onChange={(e) => locationForm.updateField('name', e.target.value)} placeholder={t('emergency.fields.locationNamePlaceholder')} required />
+            <Input label={t('emergency.fields.address')} value={locationForm.formData.address || ''} onChange={(e) => locationForm.updateField('address', e.target.value)} placeholder={t('emergency.fields.addressPlaceholder')} />
+            <TextArea label={t('contacts.notes')} value={locationForm.formData.notes || ''} onChange={(e) => locationForm.updateField('notes', e.target.value)} placeholder={t('emergency.fields.notesPlaceholder')} />
           </div>
         </Modal>
 
-        <Modal isOpen={contactForm.isModalOpen} onClose={contactForm.closeModal} title={contactForm.editingItem ? 'Edit Contact' : 'Add Emergency Contact'} footer={<><Button variant="secondary" onClick={contactForm.closeModal}>Cancel</Button><Button onClick={handleSaveContact} disabled={!contactForm.formData.name?.trim() || !contactForm.formData.phone?.trim()}>Save</Button></>}>
+        <Modal isOpen={contactForm.isModalOpen} onClose={contactForm.closeModal} title={contactForm.editingItem ? t('emergency.editContact') : t('emergency.addEmergencyContact')} footer={<><Button variant="secondary" onClick={contactForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveContact} disabled={!contactForm.formData.name?.trim() || !contactForm.formData.phone?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Name/Service" value={contactForm.formData.name || ''} onChange={(e) => contactForm.updateField('name', e.target.value)} placeholder="e.g., Poison Control, St. Mary's Hospital" required />
-            <Input label="Type/Relationship" value={contactForm.formData.relationship || ''} onChange={(e) => contactForm.updateField('relationship', e.target.value)} placeholder="e.g., Hospital, Emergency Service, Family Doctor" />
-            <Input label="Phone Number" type="tel" value={contactForm.formData.phone || ''} onChange={(e) => contactForm.updateField('phone', e.target.value)} required />
-            <TextArea label="Notes" value={contactForm.formData.notes || ''} onChange={(e) => contactForm.updateField('notes', e.target.value)} placeholder="Address, hours, special instructions..." />
+            <Input label={t('emergency.fields.nameService')} value={contactForm.formData.name || ''} onChange={(e) => contactForm.updateField('name', e.target.value)} placeholder={t('emergency.fields.nameServicePlaceholder')} required />
+            <Input label={t('emergency.fields.typeRelationship')} value={contactForm.formData.relationship || ''} onChange={(e) => contactForm.updateField('relationship', e.target.value)} placeholder={t('emergency.fields.typeRelationshipPlaceholder')} />
+            <Input label={t('emergency.fields.phoneNumber')} type="tel" value={contactForm.formData.phone || ''} onChange={(e) => contactForm.updateField('phone', e.target.value)} required />
+            <TextArea label={t('contacts.notes')} value={contactForm.formData.notes || ''} onChange={(e) => contactForm.updateField('notes', e.target.value)} placeholder={t('emergency.fields.notesPlaceholder2')} />
           </div>
         </Modal>
 
-        <Modal isOpen={grabForm.isModalOpen} onClose={grabForm.closeModal} title={grabForm.editingItem ? 'Edit Item' : 'Add Grab List Item'} footer={<><Button variant="secondary" onClick={grabForm.closeModal}>Cancel</Button><Button onClick={handleSaveGrab} disabled={!grabForm.formData.item?.trim()}>Save</Button></>}>
+        <Modal isOpen={grabForm.isModalOpen} onClose={grabForm.closeModal} title={grabForm.editingItem ? t('emergency.editItem') : t('emergency.addGrabListItem')} footer={<><Button variant="secondary" onClick={grabForm.closeModal}>{t('common.cancel')}</Button><Button onClick={handleSaveGrab} disabled={!grabForm.formData.item?.trim()}>{t('common.save')}</Button></>}>
           <div className="space-y-4">
-            <Input label="Item" value={grabForm.formData.item || ''} onChange={(e) => grabForm.updateField('item', e.target.value)} placeholder="e.g., Important documents folder, Medications" required />
-            <Input label="Location" value={grabForm.formData.location || ''} onChange={(e) => grabForm.updateField('location', e.target.value)} placeholder="Where to find this item" />
-            <Input label="Priority (1=highest)" type="number" min="1" value={grabForm.formData.priority || 1} onChange={(e) => grabForm.updateField('priority', parseInt(e.target.value) || 1)} />
+            <Input label={t('emergency.fields.item')} value={grabForm.formData.item || ''} onChange={(e) => grabForm.updateField('item', e.target.value)} placeholder={t('emergency.fields.itemPlaceholder')} required />
+            <Input label={t('emergency.fields.location')} value={grabForm.formData.location || ''} onChange={(e) => grabForm.updateField('location', e.target.value)} placeholder={t('emergency.fields.locationPlaceholder')} />
+            <Input label={t('emergency.fields.priority')} type="number" min="1" value={grabForm.formData.priority || 1} onChange={(e) => grabForm.updateField('priority', parseInt(e.target.value) || 1)} />
           </div>
         </Modal>
       </div>

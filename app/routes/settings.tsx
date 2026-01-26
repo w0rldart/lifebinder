@@ -153,6 +153,26 @@ export default function Settings() {
                 >
                   Español
                 </button>
+                <button
+                  onClick={() => setLanguage('de')}
+                  className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+                    language === 'de'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  Deutsch
+                </button>
+                <button
+                  onClick={() => setLanguage('fr')}
+                  className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+                    language === 'fr'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  Français
+                </button>
               </div>
             </div>
 

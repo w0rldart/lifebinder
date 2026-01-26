@@ -21,16 +21,18 @@ Checkout [DEPLYOMENT.md](./DEPLOYMENT.md) for more info on how to run it yoursel
 Life Binder combines two essential components:
 
 1. **Information Vault**: A structured repository for personal information
-   - Personal info
-   - Document locations
-   - Account details
-   - Emergency plans
+
+- Personal info
+- Document locations
+- Account details
+- Emergency plans
 
 2. **Actionable Runbook**: A crisis-ready guide for trusted contacts
-   - First 24 hours checklist
-   - Priority notification order
-   - Access instructions
-   - Critical account information
+
+- First 24 hours checklist
+- Priority notification order
+- Access instructions
+- Critical account information
 
 ### What Life Binder Does NOT Do
 
@@ -84,6 +86,7 @@ Life Binder draws inspiration from two key resources:
 ### PDF Exports
 
 PDF exports include:
+
 - First 24 Hours action checklist
 - Priority contacts to notify before social announcements
 - Access information and password manager location
@@ -128,6 +131,7 @@ PDF exports include:
 ### How Data is Stored
 
 Life Binder uses a **local-first architecture**:
+
 - All data is stored in your browser's IndexedDB (client-side storage)
 - No server-side database or data collection
 - Data remains on the device where you use Life Binder
@@ -142,6 +146,7 @@ Life Binder uses a **local-first architecture**:
 ### Multi-Device Access
 
 To access your Life Binder data on multiple devices:
+
 1. Export encrypted backup from Device A
 2. Access Life Binder on Device B
 3. Import the encrypted backup on Device B

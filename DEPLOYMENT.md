@@ -43,7 +43,7 @@ Build:
 docker build --platform linux/amd64,linux/arm64 -t lifebinder .
 ```
 
-Using `--platform` is to enable [multi-platform](https://docs.docker.com/build/building/multi-platform/) support, and being able to run this as a selfhosted tool on Synology.
+Using `--platform` is to enable [multi-platform](https://docs.docker.com/build/building/multi-platform/) support, and being able to run this as a self-hosted tool on Synology.
 
 Run (maps host port **3000** to container port **8080**):
 
@@ -94,6 +94,6 @@ The container includes a simple health check (HTTP GET `/`). In Docker you’ll 
 Synology’s Container Manager works well for this kind of “static web app in a box”. The main things to understand are:
 
 1. You have to have Container Manager installed.
-2. Go to Registry page inside Container Manager, search for `w0rldart/lifebinder` image, and download it. 
+2. Go to Registry page inside Container Manager, search for `w0rldart/lifebinder` image, and download it.
 3. Run the image, ensuring `Set up web portal via Web Station` option is enabled with 8080 port for HTTP.
-4. Go to Web Station when given the option after loading the Docker image, and ensure `Portal type` is configured as `Port-based`. Enable `HTTP` and chose a port you want the app to be accessible on (i.e. 3333)
+4. Go to Web Station when given the option after loading the Docker image, and ensure `Portal type` is configured as `Port-based`. Enable `HTTP` and choose a port you want the app to be accessible on (i.e. 3333)

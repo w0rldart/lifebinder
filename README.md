@@ -12,9 +12,11 @@ A local-first, encrypted end-of-life planning and information management applica
 
 ## Demo
 
-You can check out a demo at https://lifebinder.w0rldart.com
+You can check out a demo at https://lifebinder.w0rldart.com, or try it out for yourself with the [demo data](./DEPLOYMENT.md#demo-data).
 
-Checkout [DEPLYOMENT.md](./DEPLOYMENT.md) for more info on how to run it yourself.
+Additionally, check out these screenshots:
+
+[Landing page](./pics/landing.png) | [Dashboard](./pics/demo-dashboard.png) | [Contacts](./pics/demo-contacts.png) | [Financial](./pics/demo-financial.png)
 
 ## What is Life Binder?
 
@@ -82,6 +84,7 @@ Life Binder draws inspiration from two key resources:
 - ✅ Searchable help documentation
 - ✅ Plan reset/deletion
 - ✅ Demo data for exploration
+- ✅ Language support (English, Spanish, German, and French)
 
 ### PDF Exports
 
@@ -164,7 +167,7 @@ To access your Life Binder data on multiple devices:
 
 Contributions are welcome! Please ensure:
 
-1. Checkout [DEPLYOMENT.md](./DEPLOYMENT.md)
+1. Checkout [DEPLOYMENT.md](./DEPLOYMENT.md)
 1. Code follows existing patterns
 1. TypeScript types are properly defined
 1. Security best practices are maintained

@@ -31,6 +31,7 @@
     "willTestaments": "Testaments et successions",
     "access": "Instructions d'accès",
     "notes": "Notes",
+    "audit": "Journal d'audit",
     "settings": "Paramètres",
     "export": "Exporter",
     "help": "Aide",
@@ -1184,6 +1185,16 @@
       "item4": "Mettez vos phrases de passe en lieu sûr",
       "item5": "Révisez le contenu après chaque changement de vie"
     }
+  },
+  "auditLog": {
+    "title": "Journal d'audit",
+    "description": "Un registre sécurisé de toutes les activités et modifications importantes.",
+    "exportCsv": "Exporter CSV",
+    "searchPlaceholder": "Rechercher dans les journaux ou les modifications...",
+    "allActions": "Toutes les actions",
+    "noActivity": "Aucune activité enregistrée.",
+    "noMatch": "Aucun journal ne correspond aux filtres.",
+    "actionLabel": "Action :"
   },
   "willTestaments": {
     "title": "Testaments et Successions",

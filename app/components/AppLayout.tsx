@@ -6,7 +6,7 @@ import { Button } from './Button';
 import { Input } from './Input';
 import { calculatePassphraseStrength } from '~/lib/crypto';
 import { useLanguage } from '~/lib/language-context';
-import { Lock, AlertTriangle, Info, LayoutDashboard, Users, Key, CreditCard, FileText, Shield, KeyRound, Scale, DollarSign, AlertCircle, StickyNote, Package, BookOpen, Settings, Menu, X } from 'lucide-react';
+import { Lock, AlertTriangle, Info, LayoutDashboard, Users, Key, CreditCard, FileText, Shield, KeyRound, Scale, DollarSign, AlertCircle, StickyNote, Package, BookOpen, Settings, Menu, X, Activity } from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -48,6 +48,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     { path: '/financial', label: t('navigation.financial'), icon: DollarSign },
     { path: '/emergency', label: t('navigation.emergency'), icon: AlertCircle },
     { path: '/notes', label: t('navigation.notes'), icon: StickyNote },
+    { path: '/audit', label: t('navigation.audit'), icon: Activity },
     { path: '/export', label: t('navigation.export'), icon: Package },
     { path: '/help', label: t('navigation.help'), icon: BookOpen },
     { path: '/settings', label: t('navigation.settings'), icon: Settings },

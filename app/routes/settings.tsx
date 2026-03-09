@@ -68,6 +68,17 @@ export default function Settings() {
     await updatePlan(updatedPlan, 'Preference updated');
   };
 
+  const handleUpdateAuditRetention = async (retention: 'all' | '30d' | '90d' | '1000') => {
+    const updatedPlan = {
+      ...plan,
+      preferences: {
+        ...plan.preferences,
+        auditLogRetention: retention,
+      },
+    };
+    await updatePlan(updatedPlan, 'Audit retention policy updated');
+  };
+
   const handleDeletePlan = async () => {
     try {
       await resetPlan();
@@ -195,6 +206,30 @@ export default function Settings() {
                   }`}
                 />
               </button>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="mb-3">
+                <p className="font-medium text-gray-900">{t('settings.auditLogRetention')}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {t('settings.auditLogRetentionDesc')}
+                </p>
+              </div>
+              <div className="flex gap-3 flex-wrap sm:flex-nowrap">
+                {['all', '30d', '90d', '1000'].map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => handleUpdateAuditRetention(option as any)}
+                    className={`flex-1 px-4 py-2 text-sm sm:text-base rounded-lg border-2 transition-all ${
+                      (plan.preferences.auditLogRetention || 'all') === option
+                        ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                    }`}
+                  >
+                    {t(`settings.retention.${option}`)}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </Card>

@@ -984,5 +984,6 @@ export function generateDemoData(title: string = 'Demo Life Binder (Sample Data)
       backupCodes: 'EXAMPLE: Two-factor authentication backup codes stored in multiple locations:\n\n1. Password manager (primary location)\n2. Printed copy in home safe\n3. Encrypted file on NAS backup\n4. Copy with attorney in sealed envelope\n\nCodes should be used to gain access to 2FA-protected accounts. Each code can typically only be used once.',
       recoveryNotes: 'EXAMPLE: Account Recovery Process:\n\n1. Email accounts: Use password manager for credentials, backup codes for 2FA\n2. Banking: May require death certificate + executor documentation\n3. Social media: Use legacy contact feature (Facebook) or memorialization request\n4. Apple ID: Legacy contact feature activated - spouse has access\n5. Google: Inactive account manager set up - spouse receives access after 3 months\n\nGeneral tips:\n- Most services have specific procedures for deceased users\n- Death certificate will be required for financial accounts\n- Executor documentation required for many official actions\n- Some accounts can\'t be transferred, only closed or memorialized',
     },
+    auditLogs: [],
   };
 }

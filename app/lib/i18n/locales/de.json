@@ -31,6 +31,7 @@
     "willTestaments": "Testament & Nachlass",
     "access": "Zugriffsanweisungen",
     "notes": "Notizen",
+    "audit": "Überwachungsprotokoll",
     "settings": "Einstellungen",
     "export": "Export",
     "help": "Hilfe",
@@ -1184,6 +1185,16 @@
       "item4": "Halten Sie Passphrasen für Vertrauenspersonen zugänglich",
       "item5": "Aktualisieren Sie den Binder nach wichtigen Lebensereignissen"
     }
+  },
+  "auditLog": {
+    "title": "Prüfprotokoll",
+    "description": "Eine sichere Aufzeichnung aller wichtigen Aktivitäten und Datenänderungen.",
+    "exportCsv": "CSV exportieren",
+    "searchPlaceholder": "In Protokollen oder Änderungen suchen...",
+    "allActions": "Alle Aktionen",
+    "noActivity": "Noch keine Aktivität aufgezeichnet.",
+    "noMatch": "Keine Protokolle entsprechen den Filtern.",
+    "actionLabel": "Aktion:"
   },
   "willTestaments": {
     "title": "Testament & Nachlass",

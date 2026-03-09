@@ -11,7 +11,7 @@ interface SessionContextType {
   isEncrypted: boolean;
   unlock: (passphrase?: string) => Promise<void>;
   lock: () => void;
-  savePlan: (plan: Plan) => Promise<void>;
+  savePlan: (plan: Plan, auditAction?: string, auditDetails?: string, changes?: string[]) => Promise<void>;
   createNewPlan: (title: string, passphrase?: string) => Promise<void>;
   createDemoPlan: (passphrase?: string) => Promise<void>;
   addEncryption: (passphrase: string) => Promise<void>;
@@ -110,6 +110,7 @@ function createEmptyPlan(title: string, isEncrypted: boolean): Plan {
       taxDocuments: [],
     },
     notes: [],
+    auditLogs: [],
   };
 }
 
@@ -159,6 +160,7 @@ function ensurePlanStructure(plan: Plan): Plan {
       ...plan.financial,
     },
     notes: plan.notes || defaults.notes,
+    auditLogs: plan.auditLogs || defaults.auditLogs,
   };
 }
 
@@ -288,6 +290,39 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
       setIsLocked(false);
       setLastActivity(Date.now());
+      
+      // We can't easily save the plan here without re-encrypting, so we'll just log this unlock event
+      // if we have a plan in state, but wait, we need to save the plan with the new audit log.
+      // Easiest is to push to the newly loaded plan, then save it immediately.
+      // But we can avoid doing the side-effect here and instead log on the first action, OR
+      // we can do a background save. Let's do a background save if it's safe.
+      setPlan(prev => {
+        if (!prev) return prev;
+        const newPlan = { ...prev };
+        newPlan.auditLogs = [...(newPlan.auditLogs || []), {
+          id: crypto.randomUUID(),
+          action: 'unlock',
+          details: 'Plan unlocked and accessed',
+          timestamp: new Date().toISOString()
+        }];
+        
+        // Background save to persist the unlock event
+        (async () => {
+          try {
+            if (newPlan.isEncrypted && currentPassphrase) {
+              const encryptedData = await encryptPlan(newPlan, currentPassphrase);
+              await saveEncryptedPlan(encryptedData);
+            } else if (!newPlan.isEncrypted) {
+              await savePlainPlan(newPlan);
+            }
+          } catch (e) {
+            console.error('Failed to log unlock event', e);
+          }
+        })();
+        
+        return newPlan;
+      });
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to unlock');
       throw err;
@@ -301,10 +336,38 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setTimeUntilAutoLock(AUTO_LOCK_TIMEOUT);
   };
 
-  const savePlan = async (updatedPlan: Plan) => {
+  const savePlan = async (updatedPlan: Plan, auditAction?: string, auditDetails?: string, changes?: string[]) => {
     try {
       setError(null);
       updatedPlan.updatedAt = new Date().toISOString();
+
+      if (auditAction && auditDetails) {
+        updatedPlan.auditLogs = [...(updatedPlan.auditLogs || []), {
+          id: crypto.randomUUID(),
+          action: auditAction,
+          details: auditDetails,
+          changes: changes,
+          timestamp: new Date().toISOString()
+        }];
+      }
+
+      const retention = updatedPlan.preferences?.auditLogRetention || 'all';
+      if (retention !== 'all' && updatedPlan.auditLogs && updatedPlan.auditLogs.length > 0) {
+        const sortedLogs = [...updatedPlan.auditLogs].sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+
+        if (retention === '1000') {
+          updatedPlan.auditLogs = sortedLogs.slice(0, 1000).reverse(); // keeping chronological order where latest is last
+        } else if (retention === '30d' || retention === '90d') {
+          const days = retention === '30d' ? 30 : 90;
+          const cutoff = new Date();
+          cutoff.setDate(cutoff.getDate() - days);
+          updatedPlan.auditLogs = sortedLogs.filter(
+            log => new Date(log.timestamp) >= cutoff
+          ).reverse();
+        }
+      }
 
       if (updatedPlan.isEncrypted) {
         if (!currentPassphrase) {
@@ -324,11 +387,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createNewPlan = async (title: string, passphrase?: string) => {
+    const createNewPlan = async (title: string, passphrase?: string) => {
     try {
       setError(null);
       const encrypted = !!passphrase;
-      const newPlan = createEmptyPlan(title, encrypted);
+      let newPlan = createEmptyPlan(title, encrypted);
+
+      newPlan.auditLogs = [{
+        id: crypto.randomUUID(),
+        action: 'system_create',
+        details: 'New plan created',
+        timestamp: new Date().toISOString()
+      }];
 
       if (encrypted && passphrase) {
         const encryptedData = await encryptPlan(newPlan, passphrase);
@@ -356,6 +426,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       const encrypted = !!passphrase;
       const demoPlan = generateDemoData();
       demoPlan.isEncrypted = encrypted;
+
+      demoPlan.auditLogs = [{
+        id: crypto.randomUUID(),
+        action: 'system_demo',
+        details: 'Demo plan populated',
+        timestamp: new Date().toISOString()
+      }];
 
       if (encrypted && passphrase) {
         const encryptedData = await encryptPlan(demoPlan, passphrase);
@@ -388,6 +465,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       }
 
       const updatedPlan = { ...plan, isEncrypted: true };
+      
+      updatedPlan.auditLogs = [...(updatedPlan.auditLogs || []), {
+        id: crypto.randomUUID(),
+        action: 'system_encrypt',
+        details: 'Encryption enabled on the plan',
+        timestamp: new Date().toISOString()
+      }];
+
       const encryptedData = await encryptPlan(updatedPlan, passphrase);
       await saveEncryptedPlan(encryptedData);
 

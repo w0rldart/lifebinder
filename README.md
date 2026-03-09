@@ -174,6 +174,14 @@ Contributions are welcome! Please ensure:
 1. Documentation is updated
 1. Testing is performed
 
+### Testing
+
+This project uses a comprehensive testing suite:
+
+- **Unit & Component Integration Tests**: Run via `npm run test:unit`. Uses **Vitest** and **React Testing Library** to test core encryption logic and component rendering.
+- **End-to-End Tests**: Run via `npm run test:e2e`. Uses **Playwright** to spawn a real Chromium browser and test critical user flows like onboarding, data wiping, and JSON exports.
+- **Playwright UI Viewer**: To visually watch and debug the E2E ghost-user run through the app, run `npx playwright test --ui`.
+
 ## Support & Donations
 
 Life Binder is an open-source project under the MIT License (see [LICENSE](./LICENSE) for details).

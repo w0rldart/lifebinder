@@ -8,6 +8,7 @@ import { WarningBanner } from '~/components/WarningBanner';
 import { useSession } from '~/lib/session-context';
 import { useLanguage } from '~/lib/language-context';
 import { encryptPlan, decryptPlan } from '~/lib/crypto';
+import { validatePlanSchema } from '~/lib/validation';
 import { generatePDF } from '~/lib/pdf-generator';
 import type { EncryptedData, Plan } from '~/types';
 
@@ -25,64 +26,6 @@ export default function Export() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  const validatePlanSchema = (data: any): { valid: boolean; errors: string[] } => {
-    const errors: string[] = [];
-
-    if (!data || typeof data !== 'object') {
-      return { valid: false, errors: ['Invalid plan data: not an object'] };
-    }
-
-    const requiredFields = ['id', 'title', 'createdAt', 'updatedAt', 'contacts', 'notificationPlan', 'access', 'accounts', 'documents', 'emergency'];
-
-    for (const field of requiredFields) {
-      if (!(field in data)) {
-        errors.push(`Missing required field: ${field}`);
-      }
-    }
-
-    if (!('willTestaments' in data) && !('estatePlanning' in data)) {
-      errors.push('Missing required field: willTestaments or estatePlanning');
-    }
-
-    if (data.contacts && !Array.isArray(data.contacts)) {
-      errors.push('Invalid contacts: must be an array');
-    }
-
-    if (data.notificationPlan && typeof data.notificationPlan !== 'object') {
-      errors.push('Invalid notificationPlan: must be an object');
-    }
-
-    if (data.notificationPlan && !('orderedContactIds' in data.notificationPlan)) {
-      errors.push('Invalid notificationPlan: missing orderedContactIds');
-    }
-
-    if (data.access && typeof data.access !== 'object') {
-      errors.push('Invalid access: must be an object');
-    }
-
-    if (data.accounts && typeof data.accounts !== 'object') {
-      errors.push('Invalid accounts: must be an object');
-    }
-
-    if (data.documents && !Array.isArray(data.documents)) {
-      errors.push('Invalid documents: must be an array');
-    }
-
-    if (data.emergency && typeof data.emergency !== 'object') {
-      errors.push('Invalid emergency: must be an object');
-    }
-
-    if (data.willTestaments && typeof data.willTestaments !== 'object') {
-      errors.push('Invalid willTestaments: must be an object');
-    }
-
-    if (data.estatePlanning && typeof data.estatePlanning !== 'object') {
-      errors.push('Invalid estatePlanning: must be an object');
-    }
-
-    return { valid: errors.length === 0, errors };
-  };
 
   const handleExportEncryptedJSON = async () => {
     if (!exportPassphrase) {
@@ -113,6 +56,8 @@ export default function Export() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
+      await savePlan(plan, 'export_json', 'Exported encrypted JSON backup');
+
       setSuccess(t('export.success.encryptedExported'));
       setIsExportModalOpen(false);
       setExportPassphrase('');
@@ -123,10 +68,11 @@ export default function Export() {
     }
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     try {
       if (!plan) return;
       generatePDF(plan, includeHighSensitivity);
+      await savePlan(plan, 'export_pdf', `Exported PDF document (High sensitivity: ${includeHighSensitivity})`);
       setSuccess(t('export.success.pdfExported'));
     } catch (err) {
       setError(t('export.errors.pdfFailed'));
@@ -163,7 +109,15 @@ export default function Export() {
         return;
       }
 
-      await savePlan(importedPlan as Plan);
+      const planWithImportLog = { ...importedPlan as Plan };
+      planWithImportLog.auditLogs = [...(planWithImportLog.auditLogs || []), {
+        id: crypto.randomUUID(),
+        action: 'import_json',
+        details: 'Imported plan from JSON backup',
+        timestamp: new Date().toISOString()
+      }];
+
+      await savePlan(planWithImportLog);
       setSuccess(t('export.importSuccess'));
       setIsImportModalOpen(false);
       setImportPassphrase('');

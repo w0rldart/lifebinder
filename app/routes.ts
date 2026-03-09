@@ -13,6 +13,7 @@ export default [
   route("financial", "routes/financial.tsx"),
   route("emergency", "routes/emergency.tsx"),
   route("notes", "routes/notes.tsx"),
+  route("audit", "routes/audit.tsx"),
   route("export", "routes/export.tsx"),
   route("help", "routes/help.tsx"),
   route("settings", "routes/settings.tsx"),

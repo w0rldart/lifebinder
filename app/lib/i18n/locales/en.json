@@ -31,6 +31,7 @@
     "willTestaments": "Will & Testaments",
     "access": "Access Instructions",
     "notes": "Notes",
+    "audit": "Audit Log",
     "settings": "Settings",
     "export": "Export",
     "help": "Help",
@@ -1067,6 +1068,14 @@
     "preferences": "Preferences",
     "showEncryptionWarning": "Show Encryption Warning",
     "showEncryptionWarningDesc": "Display a warning banner when encryption is disabled",
+    "auditLogRetention": "Audit Log Retention",
+    "auditLogRetentionDesc": "Choose how long to keep audit log history before automatically deleting older entries",
+    "retention": {
+      "all": "Keep All",
+      "30d": "30 Days",
+      "90d": "90 Days",
+      "1000": "Last 1000 Entries"
+    },
     "aboutSupport": "About & Support",
     "aboutDescription": "Life Binder is an open-source project. Check out the code, contribute, or show your support!",
     "viewOnGitHub": "View on GitHub",
@@ -1184,6 +1193,16 @@
       "item4": "Keep your passphrases secure and accessible to trusted contacts",
       "item5": "Review and update your binder after major life changes"
     }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "description": "A secure record of all major activities and data modifications.",
+    "exportCsv": "Export CSV",
+    "searchPlaceholder": "Search audit logs or changes...",
+    "allActions": "All Actions",
+    "noActivity": "No activity recorded yet.",
+    "noMatch": "No logs match your filters.",
+    "actionLabel": "Action:"
   },
   "willTestaments": {
     "title": "Will & Testaments",

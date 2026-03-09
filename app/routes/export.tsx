@@ -113,6 +113,8 @@ export default function Export() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
+      await savePlan(plan, 'export_json', 'Exported encrypted JSON backup');
+
       setSuccess(t('export.success.encryptedExported'));
       setIsExportModalOpen(false);
       setExportPassphrase('');
@@ -123,10 +125,11 @@ export default function Export() {
     }
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     try {
       if (!plan) return;
       generatePDF(plan, includeHighSensitivity);
+      await savePlan(plan, 'export_pdf', `Exported PDF document (High sensitivity: ${includeHighSensitivity})`);
       setSuccess(t('export.success.pdfExported'));
     } catch (err) {
       setError(t('export.errors.pdfFailed'));
@@ -163,7 +166,15 @@ export default function Export() {
         return;
       }
 
-      await savePlan(importedPlan as Plan);
+      const planWithImportLog = { ...importedPlan as Plan };
+      planWithImportLog.auditLogs = [...(planWithImportLog.auditLogs || []), {
+        id: crypto.randomUUID(),
+        action: 'import_json',
+        details: 'Imported plan from JSON backup',
+        timestamp: new Date().toISOString()
+      }];
+
+      await savePlan(planWithImportLog);
       setSuccess(t('export.importSuccess'));
       setIsImportModalOpen(false);
       setImportPassphrase('');

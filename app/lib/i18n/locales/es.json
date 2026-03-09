@@ -31,6 +31,7 @@
     "willTestaments": "Testamento",
     "access": "Instrucciones de Acceso",
     "notes": "Notas",
+    "audit": "Registro de auditoría",
     "settings": "Configuración",
     "export": "Exportar",
     "help": "Ayuda",
@@ -1184,6 +1185,16 @@
       "item4": "Mantén tus frases de contraseña seguras y accesibles para contactos de confianza",
       "item5": "Revisa y actualiza tu archivador después de cambios importantes en la vida"
     }
+  },
+  "auditLog": {
+    "title": "Registro de Auditoría",
+    "description": "Un registro seguro de todas las actividades principales y modificaciones de datos.",
+    "exportCsv": "Exportar CSV",
+    "searchPlaceholder": "Buscar en registros o cambios...",
+    "allActions": "Todas las acciones",
+    "noActivity": "Aún no hay actividad registrada.",
+    "noMatch": "Ningún registro coincide con los filtros.",
+    "actionLabel": "Acción:"
   },
   "willTestaments": {
     "title": "Testamentos y Planificación Patrimonial",

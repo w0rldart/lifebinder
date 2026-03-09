@@ -6,6 +6,14 @@ export type LocationType = 'physical' | 'digital' | 'both';
 
 export type SocialMediaDisposition = 'keep' | 'close' | 'export_first' | 'memorialize';
 
+export interface AuditLog {
+  id: string;
+  action: string;
+  details: string;
+  timestamp: string;
+  changes?: string[];
+}
+
 export interface Contact {
   id: string;
   name: string;
@@ -447,6 +455,7 @@ export interface SecurityRecoveryInfo {
 export interface UserPreferences {
   showEncryptionWarning: boolean;
   autoLockMinutes: number;
+  auditLogRetention?: 'all' | '30d' | '90d' | '1000';
 }
 
 export interface Plan {
@@ -467,6 +476,7 @@ export interface Plan {
   willTestaments: WillTestamentsInfo;
   financial: FinancialInfo;
   notes: Note[];
+  auditLogs: AuditLog[];
 }
 
 export interface EncryptedData {
